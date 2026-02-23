@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
@@ -87,7 +86,7 @@ fun PreviewItem(
                     ScalingConstants.NONE -> ContentScale.Crop
                 },
                 requestSize = IntSize(300, 300),
-                alignment = if (scaling == ScalingConstants.NONE) Alignment.CenterStart else Alignment.Center,
+                alignment = Alignment.Center,
                 colorFilter = if (darken && darkenPercentage < 100) {
                     ColorFilter.tint(
                         Color.Black.copy(alpha = (100 - darkenPercentage).toFloat().div(100f)),
