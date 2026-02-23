@@ -612,50 +612,62 @@ class HomeWallpaperService: Service() {
                 if (bitmap == null) return false
                 else if (wallpaperManager.isSetWallpaperAllowed) {
                     if (both) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val settings = getWallpaperSettings()
+                        val settings = kotlinx.coroutines.runBlocking { getWallpaperSettings() }
 
-                            processBitmap(
-                                size.width, size.height, bitmap,
-                                settings.darken, settings.homeDarkenPercentage,
-                                scaling,
-                                settings.blur, settings.homeBlurPercentage,
-                                settings.vignette, settings.homeVignettePercentage,
-                                settings.grayscale, settings.homeGrayscalePercentage
-                            )?.let { homeImage ->
-                                val cropHint = if (scaling == ScalingConstants.NONE) {
-                                    buildCenterCropHint(homeImage, size.width, size.height)
-                                } else {
-                                    null
-                                }
-                                setWallpaperSafely(homeImage, WallpaperManager.FLAG_SYSTEM, wallpaperManager, cropHint)
+                        val homeSuccess = processBitmap(
+                            size.width, size.height, bitmap,
+                            settings.darken, settings.homeDarkenPercentage,
+                            scaling,
+                            settings.blur, settings.homeBlurPercentage,
+                            settings.vignette, settings.homeVignettePercentage,
+                            settings.grayscale, settings.homeGrayscalePercentage
+                        )?.let { homeImage ->
+                            val cropHint = if (scaling == ScalingConstants.NONE) {
+                                buildCenterCropHint(homeImage, size.width, size.height)
+                            } else {
+                                null
                             }
+                            setWallpaperSafely(homeImage, WallpaperManager.FLAG_SYSTEM, wallpaperManager, cropHint)
+                        } ?: false
 
-                            processBitmap(
-                                size.width, size.height, bitmap,
-                                settings.darken, settings.lockDarkenPercentage,
-                                scaling,
-                                settings.blur, settings.lockBlurPercentage,
-                                settings.vignette, settings.lockVignettePercentage,
-                                settings.grayscale, settings.lockGrayscalePercentage
-                            )?.let { lockImage ->
-                                val cropHint = if (scaling == ScalingConstants.NONE) {
-                                    buildCenterCropHint(lockImage, size.width, size.height)
-                                } else {
-                                    null
-                                }
-                                setWallpaperSafely(lockImage, WallpaperManager.FLAG_LOCK, wallpaperManager, cropHint)
+                        if (!homeSuccess) {
+                            Log.e("HomeWallpaperService", "Failed to set home wallpaper in combined mode.")
+                            return false
+                        }
+
+                        // Give the system a short moment before applying lock wallpaper.
+                        Thread.sleep(350)
+
+                        val lockSuccess = processBitmap(
+                            size.width, size.height, bitmap,
+                            settings.darken, settings.lockDarkenPercentage,
+                            scaling,
+                            settings.blur, settings.lockBlurPercentage,
+                            settings.vignette, settings.lockVignettePercentage,
+                            settings.grayscale, settings.lockGrayscalePercentage
+                        )?.let { lockImage ->
+                            val cropHint = if (scaling == ScalingConstants.NONE) {
+                                buildCenterCropHint(lockImage, size.width, size.height)
+                            } else {
+                                null
                             }
+                            setWallpaperSafely(lockImage, WallpaperManager.FLAG_LOCK, wallpaperManager, cropHint)
+                        } ?: false
+
+                        if (!lockSuccess) {
+                            Log.e("HomeWallpaperService", "Failed to set lock wallpaper in combined mode.")
+                            return false
                         }
                     } else {
-                        processBitmap(size.width, size.height, bitmap, darken, darkenPercent, scaling, blur, blurPercent, vignette, vignettePercent, grayscale, grayscalePercent)?.let { image ->
+                        val systemSuccess = processBitmap(size.width, size.height, bitmap, darken, darkenPercent, scaling, blur, blurPercent, vignette, vignettePercent, grayscale, grayscalePercent)?.let { image ->
                             val cropHint = if (scaling == ScalingConstants.NONE) {
                                 buildCenterCropHint(image, size.width, size.height)
                             } else {
                                 null
                             }
                             setWallpaperSafely(image, WallpaperManager.FLAG_SYSTEM, wallpaperManager, cropHint)
-                        }
+                        } ?: false
+                        if (!systemSuccess) return false
                     }
                     context.triggerWallpaperTaskerEvent()
                     return true
@@ -768,19 +780,29 @@ class HomeWallpaperService: Service() {
         flag: Int,
         wallpaperManager: WallpaperManager,
         cropHint: Rect? = null
-    ) {
+    ): Boolean {
         val maxRetries = 3
         for (attempt in 1..maxRetries) {
             try {
+                Log.d(
+                    "HomeWallpaperService",
+                    "setWallpaperSafely attempt=$attempt flag=$flag bitmap=${bitmap_s?.width}x${bitmap_s?.height} cropHint=$cropHint"
+                )
                 wallpaperManager.setBitmap(bitmap_s, cropHint, true, flag)
-                return
+                return true
             } catch (e: Exception) {
+                Log.w(
+                    "HomeWallpaperService",
+                    "setWallpaperSafely failed attempt=$attempt flag=$flag: ${e.message}",
+                    e
+                )
                 if (attempt == maxRetries) {
                     Log.e("Wallpaper", "Final attempt failed: ${e.message}")
-                    return
+                    return false
                 }
                 Thread.sleep(1000L * attempt)
             }
         }
+        return false
     }
 }
