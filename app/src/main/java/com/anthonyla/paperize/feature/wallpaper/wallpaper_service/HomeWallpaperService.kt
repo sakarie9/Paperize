@@ -46,6 +46,7 @@ class HomeWallpaperService: Service() {
     private var lockInterval: Int = SettingsConstants.WALLPAPER_CHANGE_INTERVAL_DEFAULT
     private var type = Type.SINGLE.ordinal
     private var deferredTrigger: Boolean = false
+    private var ignoreSkipRules: Boolean = false
     private var isForeground = false
 
     enum class Actions {
@@ -71,6 +72,7 @@ class HomeWallpaperService: Service() {
                     scheduleSeparately = intent.getBooleanExtra("scheduleSeparately", false)
                     type = intent.getIntExtra("type", Type.SINGLE.ordinal)
                     deferredTrigger = intent.getBooleanExtra("deferredTrigger", false)
+                    ignoreSkipRules = intent.getBooleanExtra("ignoreSkipRules", false)
                     if (!deferredTrigger) {
                         ensureForegroundSafely()
                     }
@@ -215,7 +217,7 @@ class HomeWallpaperService: Service() {
                 return
             }
 
-            if (settings.skipLandscape && context.resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE) {
+            if (!ignoreSkipRules && settings.skipLandscape && context.resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE) {
                 Log.d("PaperizeWallpaperChanger", "Skipping wallpaper change - device is in landscape mode")
                 onDestroy()
                 return
@@ -223,21 +225,21 @@ class HomeWallpaperService: Service() {
 
             val powerManager = context.getSystemService(POWER_SERVICE) as PowerManager
 
-            if (settings.onlyNonInteractive && powerManager.isInteractive) {
+            if (!ignoreSkipRules && settings.onlyNonInteractive && powerManager.isInteractive) {
                 deferToNextNonInteractive()
                 Log.d("PaperizeWallpaperChanger", "Deferring wallpaper change - waiting for non-interactive state")
                 onDestroy()
                 return
             }
 
-            if (settings.onlyNonInteractive && !powerManager.isInteractive && !deferredTrigger) {
+            if (!ignoreSkipRules && settings.onlyNonInteractive && !powerManager.isInteractive && !deferredTrigger) {
                 deferToNextNonInteractive()
                 Log.d("PaperizeWallpaperChanger", "Skip while already non-interactive - waiting for next screen-off deferred trigger")
                 onDestroy()
                 return
             }
 
-            if (!settings.onlyNonInteractive && settings.skipNonInteractive){
+            if (!ignoreSkipRules && !settings.onlyNonInteractive && settings.skipNonInteractive){
                 if (!powerManager.isInteractive){
                     Log.d(
                         "PaperizeWallpaperChanger", "Skipping wallpaper change - device is in non-interactive state")

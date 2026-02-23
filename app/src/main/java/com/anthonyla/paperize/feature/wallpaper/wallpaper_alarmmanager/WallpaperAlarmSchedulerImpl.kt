@@ -28,7 +28,8 @@ data class ServiceConfig(
     val homeInterval: Int? = null,
     val lockInterval: Int? = null,
     val scheduleSeparately: Boolean? = null,
-    val type: Int? = null
+    val type: Int? = null,
+    val ignoreSkipRules: Boolean? = null
 )
 
 sealed class WallpaperAction {
@@ -233,7 +234,8 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
         val serviceConfig = ServiceConfig(
             homeInterval = wallpaperAlarmItem.homeInterval,
             lockInterval = wallpaperAlarmItem.lockInterval,
-            scheduleSeparately = wallpaperAlarmItem.scheduleSeparately
+            scheduleSeparately = wallpaperAlarmItem.scheduleSeparately,
+            ignoreSkipRules = true
         )
 
         when (type.ordinal) {
@@ -254,6 +256,7 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
                 it.lockInterval?.let { interval -> putExtra("lockInterval", interval) }
                 it.scheduleSeparately?.let { separate -> putExtra("scheduleSeparately", separate) }
                 it.type?.let { type -> putExtra("type", type) }
+                it.ignoreSkipRules?.let { ignore -> putExtra("ignoreSkipRules", ignore) }
             }
         }
         context.startForegroundService(serviceIntent)
