@@ -89,8 +89,18 @@ class WallpaperReceiver : BroadcastReceiver() {
                         }
 
                         else -> {
-                            DeferredWallpaperChangeStore.markChangedInCurrentNonInteractiveSession(context)
-                            Log.d(TAG, "Only-non-interactive active: first non-interactive change in current session, proceed")
+                            Log.d(TAG, "Only-non-interactive active: first non-interactive regular alarm, defer and wait for deferred trigger")
+                            deferLatestRequest(
+                                context = context,
+                                type = type,
+                                setHome = setHome,
+                                setLock = setLock,
+                                homeInterval = homeInterval,
+                                lockInterval = lockInterval,
+                                scheduleSeparately = scheduleSeparately
+                            )
+                            DeferredWallpaperTriggerReceiver.scheduleDeferredCheck(context)
+                            shouldStartServices = false
                         }
                     }
                 }
