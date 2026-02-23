@@ -126,8 +126,18 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
 
         if (setAlarm) {
             if (wallpaperAlarmItem.scheduleSeparately) {
-                scheduleWallpaper(wallpaperAlarmItem, Type.LOCK, Type.LOCK.ordinal, firstLaunch, homeNextTime, lockNextTime)
-                scheduleWallpaper(wallpaperAlarmItem, Type.HOME, Type.HOME.ordinal, firstLaunch, homeNextTime, lockNextTime)
+                when (origin) {
+                    Type.HOME.ordinal -> {
+                        scheduleWallpaper(wallpaperAlarmItem, Type.HOME, Type.HOME.ordinal, firstLaunch, homeNextTime, lockNextTime)
+                    }
+                    Type.LOCK.ordinal -> {
+                        scheduleWallpaper(wallpaperAlarmItem, Type.LOCK, Type.LOCK.ordinal, firstLaunch, homeNextTime, lockNextTime)
+                    }
+                    else -> {
+                        scheduleWallpaper(wallpaperAlarmItem, Type.LOCK, Type.LOCK.ordinal, firstLaunch, homeNextTime, lockNextTime)
+                        scheduleWallpaper(wallpaperAlarmItem, Type.HOME, Type.HOME.ordinal, firstLaunch, homeNextTime, lockNextTime)
+                    }
+                }
             } else {
                 scheduleWallpaper(wallpaperAlarmItem, Type.SINGLE, null, firstLaunch, homeNextTime, lockNextTime)
             }
@@ -215,6 +225,19 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
                     Type.LOCK -> runCatching { LocalDateTime.parse(lockNextTime) }.getOrDefault(now)
                     else -> runCatching { LocalDateTime.parse(homeNextTime) }.getOrDefault(now)
                 }
+                val expectedUpperBound = now.plusMinutes(intervalMinutes)
+                if (baseTime.isAfter(expectedUpperBound)) {
+                    Log.w(
+                        TAG,
+                        "Base next time is too far in the future (base=$baseTime, now=$now, interval=$intervalMinutes). Clamping to now + interval."
+                    )
+                    return expectedUpperBound.withSecond(0).withNano(0)
+                }
+
+                if (baseTime.isAfter(now)) {
+                    return baseTime.withSecond(0).withNano(0)
+                }
+
                 var futureTime = baseTime.plusMinutes(intervalMinutes)
                 while (!futureTime.isAfter(now)) {
                     futureTime = futureTime.plusMinutes(intervalMinutes)
