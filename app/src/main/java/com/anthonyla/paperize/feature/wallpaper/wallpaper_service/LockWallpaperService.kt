@@ -59,11 +59,6 @@ class LockWallpaperService: Service() {
         super.onCreate()
         handleThread.start()
         workerHandler = Handler(handleThread.looper)
-        if (!isForeground) {
-            val notification = createInitialNotification()
-            startForeground(1, notification)
-            isForeground = true
-        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -75,12 +70,29 @@ class LockWallpaperService: Service() {
                     scheduleSeparately = intent.getBooleanExtra("scheduleSeparately", false)
                     type = intent.getIntExtra("type", Type.SINGLE.ordinal)
                     deferredTrigger = intent.getBooleanExtra("deferredTrigger", false)
+                    if (!deferredTrigger) {
+                        ensureForegroundSafely()
+                    }
                     workerTaskStart()
                 }
-                Actions.UPDATE.toString() -> workerTaskUpdate()
+                Actions.UPDATE.toString() -> {
+                    ensureForegroundSafely()
+                    workerTaskUpdate()
+                }
             }
         }
         return START_NOT_STICKY
+    }
+
+    private fun ensureForegroundSafely() {
+        if (isForeground) return
+        runCatching {
+            val notification = createInitialNotification()
+            startForeground(1, notification)
+            isForeground = true
+        }.onFailure {
+            Log.w("LockWallpaperService", "Unable to enter foreground, continue in background", it)
+        }
     }
 
     override fun onDestroy() {
@@ -159,6 +171,7 @@ class LockWallpaperService: Service() {
                 type = type
             )
         )
+        com.anthonyla.paperize.feature.wallpaper.wallpaper_alarmmanager.DeferredWallpaperTriggerReceiver.scheduleDeferredCheck(this)
     }
 
     private fun selectNextWallpaper(queue: List<String>, blockedWallpapers: Set<String>): Pair<String?, List<String>> {

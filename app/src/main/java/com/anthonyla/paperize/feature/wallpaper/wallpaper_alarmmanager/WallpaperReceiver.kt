@@ -3,6 +3,8 @@ package com.anthonyla.paperize.feature.wallpaper.wallpaper_alarmmanager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.PowerManager
 import android.util.Log
 import com.anthonyla.paperize.core.SettingsConstants
 import com.anthonyla.paperize.core.SettingsConstants.WALLPAPER_CHANGE_INTERVAL_DEFAULT
@@ -57,18 +59,43 @@ class WallpaperReceiver : BroadcastReceiver() {
                 Log.d(TAG, "Alarm received source=$triggerSource type=$type")
 
                 val onlyNonInteractive = settingsDataStore.getBoolean(SettingsConstants.ONLY_NON_INTERACTIVE) ?: false
-                if (onlyNonInteractive && !deferredTrigger) {
-                    Log.d(TAG, "Only-non-interactive active: skip service start and defer latest request")
-                    deferLatestRequest(
-                        context = context,
-                        type = type,
-                        setHome = setHome,
-                        setLock = setLock,
-                        homeInterval = homeInterval,
-                        lockInterval = lockInterval,
-                        scheduleSeparately = scheduleSeparately
-                    )
-                } else {
+                var shouldStartServices = true
+                if (onlyNonInteractive) {
+                    val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                    when {
+                        deferredTrigger -> {
+                            DeferredWallpaperChangeStore.markChangedInCurrentNonInteractiveSession(context)
+                            Log.d(TAG, "Only-non-interactive active: deferred trigger accepted (one-shot in this screen-off session)")
+                        }
+
+                        powerManager.isInteractive -> {
+                            Log.d(TAG, "Only-non-interactive active: skip service start and defer latest request")
+                            deferLatestRequest(
+                                context = context,
+                                type = type,
+                                setHome = setHome,
+                                setLock = setLock,
+                                homeInterval = homeInterval,
+                                lockInterval = lockInterval,
+                                scheduleSeparately = scheduleSeparately
+                            )
+                            DeferredWallpaperTriggerReceiver.scheduleDeferredCheck(context)
+                            shouldStartServices = false
+                        }
+
+                        DeferredWallpaperChangeStore.hasChangedInCurrentNonInteractiveSession(context) -> {
+                            Log.d(TAG, "Only-non-interactive active: already changed in current non-interactive session, skip")
+                            shouldStartServices = false
+                        }
+
+                        else -> {
+                            DeferredWallpaperChangeStore.markChangedInCurrentNonInteractiveSession(context)
+                            Log.d(TAG, "Only-non-interactive active: first non-interactive change in current session, proceed")
+                        }
+                    }
+                }
+
+                if (shouldStartServices) {
                     when (type) {
                         Type.SINGLE.ordinal -> {
                             if (setLock) startService(context, LockWallpaperService::class.java, LockWallpaperService.Actions.START.toString(), homeInterval, lockInterval, scheduleSeparately, type, deferredTrigger)
@@ -196,6 +223,21 @@ class WallpaperReceiver : BroadcastReceiver() {
             type?.let { putExtra("type", it) }
             putExtra("deferredTrigger", deferredTrigger)
         }
-        context.startForegroundService(serviceIntent)
+        if (deferredTrigger) {
+            context.startService(serviceIntent)
+            return
+        }
+
+        try {
+            context.startForegroundService(serviceIntent)
+        } catch (e: RuntimeException) {
+            // Android 12+ may deny foreground starts in background-receiver context.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                Log.w(TAG, "Foreground start denied, fallback to background service for $serviceClass", e)
+                context.startService(serviceIntent)
+            } else {
+                throw e
+            }
+        }
     }
 }

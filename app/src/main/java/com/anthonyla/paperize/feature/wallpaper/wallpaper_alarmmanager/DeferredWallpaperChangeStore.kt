@@ -22,6 +22,7 @@ object DeferredWallpaperChangeStore {
     private const val KEY_SCHEDULE_SEPARATELY = "schedule_separately"
     private const val KEY_TYPE = "type"
     private const val KEY_CREATED_AT = "created_at"
+    private const val KEY_NON_INTERACTIVE_CHANGED = "non_interactive_changed"
 
     const val TARGET_HOME = "home"
     const val TARGET_LOCK = "lock"
@@ -56,5 +57,23 @@ object DeferredWallpaperChangeStore {
 
     fun clear(context: Context) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit { clear() }
+    }
+
+    fun resetNonInteractiveSession(context: Context) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit {
+            putBoolean(KEY_NON_INTERACTIVE_CHANGED, false)
+        }
+    }
+
+    fun markChangedInCurrentNonInteractiveSession(context: Context) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit {
+            putBoolean(KEY_NON_INTERACTIVE_CHANGED, true)
+        }
+    }
+
+    fun hasChangedInCurrentNonInteractiveSession(context: Context): Boolean {
+        return context
+            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getBoolean(KEY_NON_INTERACTIVE_CHANGED, false)
     }
 }
