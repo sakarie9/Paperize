@@ -409,10 +409,24 @@ class LockWallpaperService: Service() {
             try {
                 val wallpaperManager = WallpaperManager.getInstance(this.applicationContext)
                 val size = getDeviceScreenSize(context)
+                val desiredWidth = wallpaperManager.desiredMinimumWidth
+                val desiredHeight = wallpaperManager.desiredMinimumHeight
+                Log.d(
+                    "WallpaperResolution",
+                    "LockService.setWallpaper uri=$wallpaper, getDeviceScreenSize=${size.width}x${size.height}, desiredMinimum=${desiredWidth}x${desiredHeight}, scaling=$scaling"
+                )
                 val bitmap = retrieveBitmap(context, wallpaper, size.width, size.height, scaling)
                 if (bitmap == null) return false
                 else if (wallpaperManager.isSetWallpaperAllowed) {
+                    Log.d(
+                        "WallpaperResolution",
+                        "LockService.setWallpaper retrievedBitmap=${bitmap.width}x${bitmap.height}, config=${bitmap.config}, mutable=${bitmap.isMutable}"
+                    )
                     processBitmap(size.width, size.height, bitmap, darken, darkenPercent, scaling, blur, blurPercent, vignette, vignettePercent, grayscale, grayscalePercent)?.let { image ->
+                        Log.d(
+                            "WallpaperResolution",
+                            "LockService.setWallpaper processed=${image.width}x${image.height}, config=${image.config}, mutable=${image.isMutable}"
+                        )
                         setWallpaperSafely(image, WallpaperManager.FLAG_LOCK, wallpaperManager)
                     }
                     context.triggerWallpaperTaskerEvent()
@@ -432,6 +446,10 @@ class LockWallpaperService: Service() {
         val maxRetries = 3
         for (attempt in 1..maxRetries) {
             try {
+                Log.d(
+                    "WallpaperResolution",
+                    "LockService.setWallpaperSafely attempt=$attempt flag=$flag bitmap=${bitmap_s?.width}x${bitmap_s?.height}, config=${bitmap_s?.config}, mutable=${bitmap_s?.isMutable}"
+                )
                 wallpaperManager.setBitmap(bitmap_s, null, true, flag)
                 return
             } catch (e: Exception) {
