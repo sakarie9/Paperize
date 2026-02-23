@@ -143,6 +143,19 @@ class LockWallpaperService: Service() {
         )
     }
 
+    private fun selectNextWallpaper(queue: List<String>, blockedWallpapers: Set<String>): Pair<String?, List<String>> {
+        if (queue.isEmpty()) return null to emptyList()
+
+        val effectiveBlocked = blockedWallpapers.filter { it.isNotBlank() }.toSet()
+        val selectedIndex = queue.indexOfFirst { wallpaper ->
+            effectiveBlocked.isEmpty() || !effectiveBlocked.contains(wallpaper)
+        }.let { if (it >= 0) it else 0 }
+
+        val selectedWallpaper = queue[selectedIndex]
+        val remainingQueue = queue.filterIndexed { index, _ -> index != selectedIndex }
+        return selectedWallpaper to remainingQueue
+    }
+
     private suspend fun changeWallpaper(context: Context) {
         try {
             val selectedAlbum = albumRepository.getSelectedAlbums().first()
@@ -180,11 +193,16 @@ class LockWallpaperService: Service() {
             }
             when {
                 settings.setHome && settings.setLock && scheduleSeparately -> {
+                    val blockedWallpapers = setOf(
+                        settingsDataStoreImpl.getString(SettingsConstants.CURRENT_HOME_WALLPAPER).orEmpty(),
+                        settingsDataStoreImpl.getString(SettingsConstants.CURRENT_LOCK_WALLPAPER).orEmpty()
+                    )
                     var wallpaper = lockAlbum.album.lockWallpapersInQueue.firstOrNull()
                     if (wallpaper == null) {
                         val newWallpapers = if (settings.shuffle) lockAlbum.totalWallpapers.map { it.wallpaperUri }.shuffled()
                         else lockAlbum.totalWallpapers.map { it.wallpaperUri }
-                        wallpaper = newWallpapers.firstOrNull()
+                        val (selectedWallpaper, nextQueue) = selectNextWallpaper(newWallpapers, blockedWallpapers)
+                        wallpaper = selectedWallpaper
                         if (wallpaper == null) {
                             Log.d("PaperizeWallpaperChanger", "No wallpaper found")
                             albumRepository.cascadeDeleteAlbum(lockAlbum.album)
@@ -194,8 +212,8 @@ class LockWallpaperService: Service() {
                         else {
                             val success = isValidUri(context, wallpaper)
                             if (success) {
-                                settingsDataStoreImpl.putString(SettingsConstants.CURRENT_LOCK_WALLPAPER, wallpaper.toString())
-                                albumRepository.upsertAlbum(lockAlbum.album.copy(lockWallpapersInQueue = newWallpapers.drop(1)))
+                                settingsDataStoreImpl.putString(SettingsConstants.CURRENT_LOCK_WALLPAPER, wallpaper)
+                                albumRepository.upsertAlbum(lockAlbum.album.copy(lockWallpapersInQueue = nextQueue))
                                 setWallpaper(
                                     context = context,
                                     wallpaper = wallpaper.decompress("content://com.android.externalstorage.documents/").toUri(),
@@ -228,13 +246,15 @@ class LockWallpaperService: Service() {
                         }
                     }
                     else {
+                        val (selectedWallpaper, nextQueue) = selectNextWallpaper(lockAlbum.album.lockWallpapersInQueue, blockedWallpapers)
+                        wallpaper = selectedWallpaper
                         val success = isValidUri(context, wallpaper)
                         if (success) {
                             settingsDataStoreImpl.putString(SettingsConstants.CURRENT_LOCK_WALLPAPER, wallpaper.toString())
-                            albumRepository.upsertAlbum(lockAlbum.album.copy(lockWallpapersInQueue = lockAlbum.album.lockWallpapersInQueue.drop(1)))
+                            albumRepository.upsertAlbum(lockAlbum.album.copy(lockWallpapersInQueue = nextQueue))
                             setWallpaper(
                                 context = context,
-                                wallpaper = wallpaper.decompress("content://com.android.externalstorage.documents/").toUri(),
+                                wallpaper = wallpaper?.decompress("content://com.android.externalstorage.documents/")?.toUri(),
                                 darken = settings.darken,
                                 darkenPercent = settings.lockDarkenPercentage,
                                 scaling = settings.scaling,
@@ -266,11 +286,16 @@ class LockWallpaperService: Service() {
                 settings.setHome && settings.setLock && !scheduleSeparately -> { /* handled by home wallpaper service */ return }
                 // uses home effect settings for lockscreen
                 settings.setLock -> {
+                    val blockedWallpapers = setOf(
+                        settingsDataStoreImpl.getString(SettingsConstants.CURRENT_HOME_WALLPAPER).orEmpty(),
+                        settingsDataStoreImpl.getString(SettingsConstants.CURRENT_LOCK_WALLPAPER).orEmpty()
+                    )
                     var wallpaper = lockAlbum.album.lockWallpapersInQueue.firstOrNull()
                     if (wallpaper == null) {
                         val newWallpapers = if (settings.shuffle) lockAlbum.totalWallpapers.map { it.wallpaperUri }.shuffled()
                         else lockAlbum.totalWallpapers.map { it.wallpaperUri }
-                        wallpaper = newWallpapers.firstOrNull()
+                        val (selectedWallpaper, nextQueue) = selectNextWallpaper(newWallpapers, blockedWallpapers)
+                        wallpaper = selectedWallpaper
                         if (wallpaper == null) {
                             Log.d("PaperizeWallpaperChanger", "No wallpaper found")
                             albumRepository.cascadeDeleteAlbum(lockAlbum.album)
@@ -280,9 +305,9 @@ class LockWallpaperService: Service() {
                         else {
                             val success = isValidUri(context, wallpaper)
                             if (success) {
-                                settingsDataStoreImpl.putString(SettingsConstants.CURRENT_LOCK_WALLPAPER, wallpaper.toString())
-                                settingsDataStoreImpl.putString(SettingsConstants.CURRENT_HOME_WALLPAPER, wallpaper.toString())
-                                albumRepository.upsertAlbum(lockAlbum.album.copy(lockWallpapersInQueue = newWallpapers.drop(1)))
+                                settingsDataStoreImpl.putString(SettingsConstants.CURRENT_LOCK_WALLPAPER, wallpaper)
+                                settingsDataStoreImpl.putString(SettingsConstants.CURRENT_HOME_WALLPAPER, wallpaper)
+                                albumRepository.upsertAlbum(lockAlbum.album.copy(lockWallpapersInQueue = nextQueue))
                                 setWallpaper(
                                     context = context,
                                     wallpaper = wallpaper.decompress("content://com.android.externalstorage.documents/").toUri(),
@@ -315,14 +340,16 @@ class LockWallpaperService: Service() {
                         }
                     }
                     else {
+                        val (selectedWallpaper, nextQueue) = selectNextWallpaper(lockAlbum.album.lockWallpapersInQueue, blockedWallpapers)
+                        wallpaper = selectedWallpaper
                         val success = isValidUri(context, wallpaper)
                         if (success) {
                             settingsDataStoreImpl.putString(SettingsConstants.CURRENT_LOCK_WALLPAPER, wallpaper.toString())
                             settingsDataStoreImpl.putString(SettingsConstants.CURRENT_HOME_WALLPAPER, wallpaper.toString())
-                            albumRepository.upsertAlbum(lockAlbum.album.copy(lockWallpapersInQueue = lockAlbum.album.lockWallpapersInQueue.drop(1)))
+                            albumRepository.upsertAlbum(lockAlbum.album.copy(lockWallpapersInQueue = nextQueue))
                             setWallpaper(
                                 context = context,
-                                wallpaper = wallpaper.decompress("content://com.android.externalstorage.documents/").toUri(),
+                                wallpaper = wallpaper?.decompress("content://com.android.externalstorage.documents/")?.toUri(),
                                 darken = settings.darken,
                                 darkenPercent = settings.homeDarkenPercentage,
                                 scaling = settings.scaling,
