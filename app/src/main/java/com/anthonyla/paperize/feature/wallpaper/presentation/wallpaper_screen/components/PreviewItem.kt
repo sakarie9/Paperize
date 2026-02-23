@@ -1,8 +1,12 @@
 package com.anthonyla.paperize.feature.wallpaper.presentation.wallpaper_screen.components
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -24,10 +28,12 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.core.net.toUri
+import androidx.core.content.ContextCompat.startActivity
 import com.anthonyla.paperize.core.ScalingConstants
 import com.anthonyla.paperize.core.VignetteBitmapTransformation
 import com.anthonyla.paperize.core.decompress
 import com.anthonyla.paperize.core.isValidUri
+import com.anthonyla.paperize.R
 import com.bumptech.glide.request.RequestOptions
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
@@ -54,6 +60,21 @@ fun PreviewItem(
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val screenHeight = configuration.screenHeightDp.dp
+
+    val openImageExternally: (String) -> Unit = { uriString ->
+        val originalUri = uriString.decompress("content://com.android.externalstorage.documents/").toUri()
+        val viewIntent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(originalUri, "image/*")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        val chooser = Intent.createChooser(viewIntent, context.getString(R.string.open_with))
+        try {
+            startActivity(context, chooser, null)
+        } catch (_: ActivityNotFoundException) {
+            Toast.makeText(context, context.getString(R.string.no_app_available_to_open_image), Toast.LENGTH_SHORT).show()
+        }
+    }
+
     if (showUri) {
         val uri = wallpaperUri.decompress("content://com.android.externalstorage.documents/").toUri()
         GlideImage(
@@ -97,6 +118,9 @@ fun PreviewItem(
                 .clip(RoundedCornerShape(16.dp))
                 .border(3.dp, Color.Black, RoundedCornerShape(16.dp))
                 .background(Color.Black)
+                .clickable {
+                    openImageExternally(wallpaperUri)
+                }
                 .blur(
                     if (blur && blurPercentage > 0) {
                         blurPercentage

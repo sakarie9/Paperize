@@ -196,4 +196,6 @@
   <string name="change_wallpaper_now_question">Do you want to change the wallpaper now?</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="open_with">Open with</string>
+  <string name="no_app_available_to_open_image">No app available to open this image</string>
 </resources>
