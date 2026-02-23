@@ -24,6 +24,7 @@
 ### Wallpaper pipeline and service logic
 
 - Added center-crop hint in none crop mode, which ensures wallpapers are centered when no scaling is applied
+- Added an **only change in non-interactive mode** option: wallpaper changes are applied only when the device is non-interactive (e.g. screen off), and will apply new wallpapers immediately when the screen turns off if a change was scheduled
 
 ### User-facing wallpaper actions
 
