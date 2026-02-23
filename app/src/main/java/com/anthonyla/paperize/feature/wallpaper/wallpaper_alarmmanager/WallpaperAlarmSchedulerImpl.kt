@@ -95,12 +95,12 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
         homeNextTime: String?,
         lockNextTime: String?,
     ) {
-        Log.d(TAG, "scheduleWallpaperAlarm called with:")
-        Log.d(TAG, "  - wallpaperAlarmItem: $wallpaperAlarmItem")
-        Log.d(TAG, "  - changeImmediate: $changeImmediate, setAlarm: $setAlarm, firstLaunch: $firstLaunch")
+        Log.d(
+            TAG,
+            "scheduleWallpaperAlarm type=${if (wallpaperAlarmItem.scheduleSeparately) "SEPARATE" else "SINGLE"}, immediate=$changeImmediate, setAlarm=$setAlarm, firstLaunch=$firstLaunch, origin=$origin"
+        )
 
         if (cancelImmediate) {
-            Log.d(TAG, "Cancelling all previous alarms.")
             cancelWallpaperAlarm()
         } else {
             when (origin) {
@@ -142,10 +142,8 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
         homeNextTime: String? = null,
         lockNextTime: String? = null
     ) {
-        Log.d(TAG, "scheduleWallpaper called for type: $type")
         try {
             val nextTime = calculateNextAlarmTime(wallpaperAlarmItem, type, firstLaunch, homeNextTime ?: "", lockNextTime ?: "")
-            Log.d(TAG, "Calculated next alarm time for type '$type': $nextTime")
 
             val intent = createWallpaperIntent(wallpaperAlarmItem, type, origin)
 
@@ -232,7 +230,6 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
     }
 
     private fun changeWallpaperImmediate(wallpaperAlarmItem: WallpaperAlarmItem, type: Type) {
-        Log.d(TAG, "changeWallpaperImmediate called for type: $type")
         val serviceConfig = ServiceConfig(
             homeInterval = wallpaperAlarmItem.homeInterval,
             lockInterval = wallpaperAlarmItem.lockInterval,
@@ -250,7 +247,6 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
     }
 
     private fun startService(context: Context, serviceClass: Class<*>, action: WallpaperAction, config: ServiceConfig?) {
-        Log.d(TAG, "startService for ${serviceClass.simpleName}, action: ${action.javaClass.simpleName}")
         val serviceIntent = Intent(context, serviceClass).apply {
             this.action = action.javaClass.simpleName
             config?.let {
@@ -306,7 +302,7 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
         val triggerAtMillis = nextTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
-        Log.d(TAG, "Setting exact alarm for $nextTime (Millis: $triggerAtMillis) with requestCode: $requestCode")
+        Log.d(TAG, "Exact alarm scheduled type=$requestCode at=$nextTime")
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             triggerAtMillis,
@@ -315,7 +311,6 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
     }
 
     private fun cancelAlarm(type: Type) {
-        Log.d(TAG, "Cancelling alarm for type: $type (requestCode: ${type.ordinal})")
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             type.ordinal,

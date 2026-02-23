@@ -17,11 +17,9 @@ class DeferredWallpaperTriggerReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent?) {
         try {
-            Log.d(TAG, "onReceive action=${intent?.action}")
             if (intent?.action != Intent.ACTION_SCREEN_OFF) return
 
             val pending = DeferredWallpaperChangeStore.consume(context) ?: return
-            Log.d(TAG, "Consuming deferred wallpaper change target=${pending.target}, type=${pending.type}")
 
             // Android 14+/targetSdk 34+ may block startForegroundService from this receiver context.
             // Route through an immediate exact alarm to existing WallpaperReceiver, which already
@@ -57,7 +55,7 @@ class DeferredWallpaperTriggerReceiver : BroadcastReceiver() {
 
             Log.d(
                 TAG,
-                "Deferred change rerouted via immediate alarm: target=${pending.target}, type=${pending.type}, requestCode=$requestCode"
+                "Deferred change rerouted: target=${pending.target}, type=${pending.type}, requestCode=$requestCode"
             )
         } catch (t: Throwable) {
             Log.e(TAG, "Failed to process deferred wallpaper trigger", t)

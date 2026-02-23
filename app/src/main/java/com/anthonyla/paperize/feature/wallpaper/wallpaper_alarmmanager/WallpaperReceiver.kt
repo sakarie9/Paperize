@@ -29,7 +29,6 @@ class WallpaperReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d(TAG, "onReceive triggered.")
         if (context == null || intent == null) return
 
         val pendingResult = goAsync()
@@ -45,8 +44,6 @@ class WallpaperReceiver : BroadcastReceiver() {
                 }
 
                 val triggerSource = if (intent.getBooleanExtra("deferredTrigger", false)) "deferred" else "regular"
-                Log.d(TAG, "Regular wallpaper change alarm received.")
-                Log.d(TAG, "WallpaperReceiver source=$triggerSource")
 
                 val homeInterval = intent.getIntExtra("homeInterval", WALLPAPER_CHANGE_INTERVAL_DEFAULT)
                 val lockInterval = intent.getIntExtra("lockInterval", WALLPAPER_CHANGE_INTERVAL_DEFAULT)
@@ -57,6 +54,7 @@ class WallpaperReceiver : BroadcastReceiver() {
                 val changeStartTime = intent.getBooleanExtra("changeStartTime", false)
                 val startTime = intent.getIntArrayExtra("startTime") ?: intArrayOf(0, 0)
                 val deferredTrigger = intent.getBooleanExtra("deferredTrigger", false)
+                Log.d(TAG, "Alarm received source=$triggerSource type=$type")
 
                 val onlyNonInteractive = settingsDataStore.getBoolean(SettingsConstants.ONLY_NON_INTERACTIVE) ?: false
                 if (onlyNonInteractive && !deferredTrigger) {
@@ -86,7 +84,9 @@ class WallpaperReceiver : BroadcastReceiver() {
                 }
 
                 val origin = intent.getIntExtra("origin", -1).takeIf { it != -1 }
-                Log.d(TAG, "Rescheduling next alarm from receiver with origin: $origin")
+                if (origin != null) {
+                    Log.d(TAG, "Rescheduling next alarm from origin=$origin")
+                }
 
                 val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
                 val currentTime = LocalDateTime.now()

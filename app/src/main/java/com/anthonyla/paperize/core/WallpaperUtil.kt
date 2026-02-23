@@ -179,7 +179,7 @@ fun retrieveBitmap(
 
     Log.d(
         "WallpaperResolution",
-        "retrieveBitmap uri=$wallpaper source=${imageSize.width}x${imageSize.height}, target=${width}x${height}, scaling=$scaling, sampleSize=$sampleSize"
+        "retrieveBitmap source=${imageSize.width}x${imageSize.height}, target=${width}x${height}, scaling=$scaling, sampleSize=$sampleSize"
     )
 
     val decodedBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -208,11 +208,6 @@ fun retrieveBitmap(
             BitmapFactory.decodeStream(inputStream, null, options)
         }
     }
-
-    Log.d(
-        "WallpaperResolution",
-        "retrieveBitmap decoded=${decodedBitmap.toSpecString()}"
-    )
 
     return decodedBitmap
 }
@@ -262,10 +257,6 @@ fun fitBitmap(source: Bitmap, width: Int, height: Int): Bitmap {
     }
 
     return try {
-        Log.d(
-            "WallpaperResolution",
-            "fitBitmap input=${source.toSpecString()} target=${width}x${height}"
-        )
         val bitmap = createBitmap(width, height, source.config ?: Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val scale = width.toFloat() / source.width
@@ -276,10 +267,6 @@ fun fitBitmap(source: Bitmap, width: Int, height: Int): Bitmap {
             postTranslate(0f, yOffset)
         }
         canvas.drawBitmap(source, matrix, SharedPaintFilterAntiAlias)
-        Log.d(
-            "WallpaperResolution",
-            "fitBitmap output=${bitmap.toSpecString()} scale=$scale yOffset=$yOffset"
-        )
         bitmap
     } catch (e: Exception) {
         Log.e("WallpaperUtil", "Error fitting bitmap: $e")
@@ -295,10 +282,6 @@ fun fillBitmap(source: Bitmap, width: Int, height: Int): Bitmap {
         return source
     }
     return try {
-        Log.d(
-            "WallpaperResolution",
-            "fillBitmap input=${source.toSpecString()} target=${width}x${height}"
-        )
         val bitmap = createBitmap(width, height, source.config ?: Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val sourceAspect = source.width.toFloat() / source.height.toFloat()
@@ -323,10 +306,6 @@ fun fillBitmap(source: Bitmap, width: Int, height: Int): Bitmap {
             postTranslate(xOffset, yOffset)
         }
         canvas.drawBitmap(source, matrix, SharedPaintFilterAntiAlias)
-        Log.d(
-            "WallpaperResolution",
-            "fillBitmap output=${bitmap.toSpecString()} scale=$scale xOffset=$xOffset yOffset=$yOffset"
-        )
         bitmap
     } catch (e: Exception) {
         Log.e("WallpaperUtil", "Error filling bitmap: $e")
@@ -342,10 +321,6 @@ fun stretchBitmap(source: Bitmap, width: Int, height: Int): Bitmap {
         return source
     }
     return try {
-        Log.d(
-            "WallpaperResolution",
-            "stretchBitmap input=${source.toSpecString()} target=${width}x${height}"
-        )
         val bitmap = createBitmap(width, height, source.config ?: Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val scaleX = width.toFloat() / source.width
@@ -354,10 +329,6 @@ fun stretchBitmap(source: Bitmap, width: Int, height: Int): Bitmap {
             setScale(scaleX, scaleY)
         }
         canvas.drawBitmap(source, matrix, SharedPaintFilterAntiAlias)
-        Log.d(
-            "WallpaperResolution",
-            "stretchBitmap output=${bitmap.toSpecString()} scaleX=$scaleX scaleY=$scaleY"
-        )
         bitmap
     } catch (e: Exception) {
         Log.e("WallpaperUtil", "Error stretching bitmap: $e")
@@ -780,15 +751,10 @@ fun processBitmap(
 ): Bitmap? {
     try {
         var processedBitmap = source
-        Log.d(
-            "WallpaperResolution",
-            "processBitmap start=${processedBitmap.toSpecString()} target=${width}x${height} scaling=$scaling darken=$darken($darkenPercent) blur=$blur($blurPercent) vignette=$vignette($vignettePercent) grayscale=$grayscale($grayscalePercent)"
-        )
 
         // Apply blur first on the original size for better quality
         if (blur && blurPercent > 0) {
             processedBitmap = blurBitmap(processedBitmap, blurPercent)
-            Log.d("WallpaperResolution", "processBitmap afterBlur=${processedBitmap.toSpecString()}")
         }
 
         // Then scale the bitmap
@@ -798,31 +764,29 @@ fun processBitmap(
             ScalingConstants.STRETCH -> stretchBitmap(processedBitmap, width, height)
             ScalingConstants.NONE -> processedBitmap
         }
-        Log.d("WallpaperResolution", "processBitmap afterScale=${processedBitmap.toSpecString()}")
 
         // Ensure mutability for color effects
         if (!processedBitmap.isMutable && (darken || vignette || grayscale)) {
             Log.w("ProcessBitmap", "Bitmap became immutable. Making a mutable copy.")
             processedBitmap = processedBitmap.copy(processedBitmap.config ?: Bitmap.Config.ARGB_8888, true)
-            Log.d("WallpaperResolution", "processBitmap mutableCopy=${processedBitmap.toSpecString()}")
         }
 
         if (darken && darkenPercent > 0) {
             processedBitmap = darkenBitmap(processedBitmap, darkenPercent)
-            Log.d("WallpaperResolution", "processBitmap afterDarken=${processedBitmap.toSpecString()}")
         }
 
         if (vignette && vignettePercent > 0) {
             processedBitmap = vignetteBitmap(processedBitmap, vignettePercent)
-            Log.d("WallpaperResolution", "processBitmap afterVignette=${processedBitmap.toSpecString()}")
         }
 
         if (grayscale && grayscalePercent > 0) {
             processedBitmap = grayBitmap(processedBitmap, grayscalePercent)
-            Log.d("WallpaperResolution", "processBitmap afterGrayscale=${processedBitmap.toSpecString()}")
         }
 
-        Log.d("WallpaperResolution", "processBitmap final=${processedBitmap.toSpecString()}")
+        Log.d(
+            "WallpaperResolution",
+            "processBitmap done result=${processedBitmap.width}x${processedBitmap.height} scaling=$scaling effects=darken:$darken($darkenPercent), blur:$blur($blurPercent), vignette:$vignette($vignettePercent), grayscale:$grayscale($grayscalePercent)"
+        )
 
         return processedBitmap
     }

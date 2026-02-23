@@ -27,7 +27,7 @@ object DeferredWallpaperChangeStore {
     const val TARGET_LOCK = "lock"
 
     fun save(context: Context, change: DeferredWallpaperChange) {
-        Log.d(TAG, "Saving deferred request (overwrite latest): target=${change.target}, type=${change.type}, createdAt=${change.createdAt}")
+        Log.d(TAG, "Deferred request saved: target=${change.target}, type=${change.type}")
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit {
             putString(KEY_TARGET, change.target)
             putInt(KEY_HOME_INTERVAL, change.homeInterval)
@@ -49,7 +49,7 @@ object DeferredWallpaperChangeStore {
             type = prefs.getInt(KEY_TYPE, 0),
             createdAt = prefs.getLong(KEY_CREATED_AT, System.currentTimeMillis())
         )
-        Log.d(TAG, "Consuming deferred request: target=${change.target}, type=${change.type}, createdAt=${change.createdAt}")
+        Log.d(TAG, "Deferred request consumed: target=${change.target}, type=${change.type}")
         clear(context)
         return change
     }

@@ -590,15 +590,11 @@ class HomeWallpaperService: Service() {
                 val size = getDeviceScreenSize(context)
                 Log.d(
                     "WallpaperResolution",
-                    "HomeService.setWallpaper uri=$wallpaper, getDeviceScreenSize=${size.width}x${size.height}, scaling=$scaling"
+                    "HomeService.setWallpaper target=${size.width}x${size.height}, scaling=$scaling"
                 )
                 val bitmap = retrieveBitmap(context, wallpaper, size.width, size.height, scaling)
                 if (bitmap == null) return false
                 else if (wallpaperManager.isSetWallpaperAllowed) {
-                    Log.d(
-                        "WallpaperResolution",
-                        "HomeService.setWallpaper retrievedBitmap=${bitmap.width}x${bitmap.height}, config=${bitmap.config}, mutable=${bitmap.isMutable}"
-                    )
                     if (both) {
                         CoroutineScope(Dispatchers.IO).launch {
                             val settings = getWallpaperSettings()
@@ -616,10 +612,6 @@ class HomeWallpaperService: Service() {
                                 } else {
                                     null
                                 }
-                                Log.d(
-                                    "WallpaperResolution",
-                                    "HomeService.setWallpaper homeProcessed=${homeImage.width}x${homeImage.height}, config=${homeImage.config}, mutable=${homeImage.isMutable}, cropHint=$cropHint"
-                                )
                                 setWallpaperSafely(homeImage, WallpaperManager.FLAG_SYSTEM, wallpaperManager, cropHint)
                             }
 
@@ -636,10 +628,6 @@ class HomeWallpaperService: Service() {
                                 } else {
                                     null
                                 }
-                                Log.d(
-                                    "WallpaperResolution",
-                                    "HomeService.setWallpaper lockProcessed=${lockImage.width}x${lockImage.height}, config=${lockImage.config}, mutable=${lockImage.isMutable}, cropHint=$cropHint"
-                                )
                                 setWallpaperSafely(lockImage, WallpaperManager.FLAG_LOCK, wallpaperManager, cropHint)
                             }
                         }
@@ -650,10 +638,6 @@ class HomeWallpaperService: Service() {
                             } else {
                                 null
                             }
-                            Log.d(
-                                "WallpaperResolution",
-                                "HomeService.setWallpaper processed=${image.width}x${image.height}, config=${image.config}, mutable=${image.isMutable}, cropHint=$cropHint"
-                            )
                             setWallpaperSafely(image, WallpaperManager.FLAG_SYSTEM, wallpaperManager, cropHint)
                         }
                     }
@@ -772,10 +756,6 @@ class HomeWallpaperService: Service() {
         val maxRetries = 3
         for (attempt in 1..maxRetries) {
             try {
-                Log.d(
-                    "WallpaperResolution",
-                    "HomeService.setWallpaperSafely attempt=$attempt flag=$flag bitmap=${bitmap_s?.width}x${bitmap_s?.height}, config=${bitmap_s?.config}, mutable=${bitmap_s?.isMutable}, cropHint=$cropHint"
-                )
                 wallpaperManager.setBitmap(bitmap_s, cropHint, true, flag)
                 return
             } catch (e: Exception) {
