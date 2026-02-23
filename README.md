@@ -9,8 +9,8 @@
     <p>Paperize is a dynamic wallpaper changer application designed to keep your device's aesthetic fresh and exciting</p>
 </div>
 
-
 ## Features
+
 - **Dynamic Wallpaper Changer**: Set your wallpaper to change at specific time intervals
 - **Supports Various Image Types**: Paperize can handle a wide range of image types
   - Including: JPEG, PNG, AVIF, WEBP
@@ -19,7 +19,17 @@
 - **Wallpaper effects**: Change the brightness and the blur of your wallpaper
 - **On-Device Storage**: All your wallpapers and settings are stored on your device
 
- 
+## Fork changes
+
+### Wallpaper pipeline and service logic
+
+- Added center-crop hint in none crop mode, which ensures wallpapers are centered when no scaling is applied
+
+### User-facing wallpaper actions
+
+- Added an option to **change wallpaper immediately** with confirmation flow in the UI
+- Added support to **open images externally** from preview items, with error handling
+
 <div align="center">
     <br/>
       <img src="https://github.com/Anthonyy232/Paperize/assets/60626873/57122f72-78f8-45ed-a9ac-de943061d6a2" width="30%" alt="onboarding" />
@@ -31,13 +41,12 @@
     <video controls src="https://github.com/user-attachments/assets/ce7f5c7c-66a7-45fc-bb28-a53d8d9cf733" muted="muted"></video>
 </div>
 
-
 ## Download
-[<img src="https://github.com/Anthonyy232/Paperize/assets/60626873/1c034414-21cd-4a0a-838d-89fe7bd56910" alt="Download app from GitHub" height="80">](https://github.com/Anthonyy232/Paperize/releases)
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Download app from F-Droid" height="80">](https://f-droid.org/en/packages/com.anthonyla.paperize/)
-[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Download app from IzzyOnDroid" height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.anthonyla.paperize)
+
+[<img src="https://github.com/Anthonyy232/Paperize/assets/60626873/1c034414-21cd-4a0a-838d-89fe7bd56910" alt="Download app from GitHub" height="80">](https://github.com/sakarie9/Paperize/releases)
 
 ## Localization
+
 I want to allow more people to use the app. Currently, most of the translations are provided using machine translation and AI -- which is not optimal.
 
 I would love some help translating the app! Help me out with that [here](https://crowdin.com/project/paperize/invite?h=d8d7a7513d2beb0c96ba9b2a5f85473e2084922)!
@@ -67,6 +76,7 @@ Thanks to the creators and maintainers of the open-source libraries used in this
 This project is built using Kotlin, Java, and Gradle. Here are the steps to build the project:
 
 ### Prerequisites
+
 - Java 8 (1.8)
 - Android Studio Jellyfish | 2024.2.1 or later
 - Android Gradle Plugin 8.7.0 or later
@@ -74,11 +84,11 @@ This project is built using Kotlin, Java, and Gradle. Here are the steps to buil
 - Minimum SDK 26
 
 ### Steps
+
 - Open a terminal and run the following git command:  <pre>git clone https://github.com/Anthonyy232/Paperize.git </pre>
 - Launch Android Studio and choose Open an existing Android Studio project. Navigate to the cloned repository and select the root folder of the project.
 - In Android Studio, click on Build -> Generate Signed Bundle / APK and follow the instructions to generate an APK
 - Alternatively, click `▶ Run` and build the app and run it immediately
-
 
 ## Contributions
 
@@ -90,8 +100,8 @@ Inspiration from j4velin for their wallpaper changer app
 
 If you want to donate, you can do so using GitHub sponsorship (one-time or monthly). I appreciate the thought, thanks!
 
-
 ## License
+
 Contact on my GitHub profile
 
 [Anthony La](https://github.com/Anthonyy232) © GNU GPL v3.0

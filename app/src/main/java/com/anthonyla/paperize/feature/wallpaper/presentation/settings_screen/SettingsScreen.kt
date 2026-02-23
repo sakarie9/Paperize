@@ -51,10 +51,7 @@ import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
 private object Links {
-    const val TRANSLATE = "https://crowdin.com/project/paperize/invite?h=d8d7a7513d2beb0c96ba9b2a5f85473e2084922"
-    const val GITHUB = "https://github.com/Anthonyy232/Paperize"
-    const val FDROID = "https://f-droid.org/en/packages/com.anthonyla.paperize/"
-    const val IZZY = "https://apt.izzysoft.de/fdroid/index/apk/com.anthonyla.paperize"
+    const val GITHUB = "https://github.com/sakarie9/Paperize"
 }
 
 private object ToolbarConfig {
@@ -218,18 +215,10 @@ private fun AboutSection(
         context.startActivity(intent)
     }
     Spacer(modifier = Modifier.height(16.dp))
-    TranslateListItem {
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Links.TRANSLATE)))
-    }
-    Spacer(modifier = Modifier.height(16.dp))
     PrivacyPolicyListItem(onPrivacyClick)
-    Spacer(modifier = Modifier.height(16.dp))
-    ContactListItem(onContactClick)
     Spacer(modifier = Modifier.height(16.dp))
     PaperizeListItem(
         onGitHubClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Links.GITHUB))) },
-        onFdroidClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Links.FDROID))) },
-        onIzzyOnDroidClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Links.IZZY))) }
     )
     Spacer(modifier = Modifier.height(16.dp))
     ResetListItem(onResetClick)
