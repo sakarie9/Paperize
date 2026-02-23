@@ -193,6 +193,7 @@
   <string name="prevent_changing_during_landscape_mode">Prevent changing during landscape mode</string>
   <string name="prevent_changing_during_non_interactive_state">Prevent changing during non-interactive\nstate (e.g. Screen is off)</string>
   <string name="changing_wallpaper">Changing wallpaper…</string>
+  <string name="change_wallpaper_now_question">Do you want to change the wallpaper now?</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
 </resources>

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.QueuePlayNext
@@ -29,7 +30,8 @@ import com.anthonyla.paperize.R
 @Composable
 fun CurrentAndNextChange(
     lastSetTime: String?,
-    nextSetTime: String?
+    nextSetTime: String?,
+    onNextChangeClick: () -> Unit
 ) {
     val textFirst = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.W500)
     val textSecond = MaterialTheme.typography.labelSmall.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.W400)
@@ -78,6 +80,7 @@ fun CurrentAndNextChange(
             modifier = Modifier
                 .weight(1f)
                 .padding(PaddingValues(16.dp, 8.dp, 8.dp, 8.dp))
+                .clickable(onClick = onNextChangeClick)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

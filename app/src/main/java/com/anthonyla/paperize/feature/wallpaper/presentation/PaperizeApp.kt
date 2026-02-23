@@ -58,6 +58,7 @@ import com.anthonyla.paperize.feature.wallpaper.util.navigation.WallpaperView
 import com.anthonyla.paperize.feature.wallpaper.util.navigation.animatedScreen
 import com.anthonyla.paperize.feature.wallpaper.wallpaper_alarmmanager.WallpaperAlarmItem
 import com.anthonyla.paperize.feature.wallpaper.wallpaper_alarmmanager.WallpaperAlarmSchedulerImpl
+import com.anthonyla.paperize.feature.wallpaper.wallpaper_alarmmanager.WallpaperBootAndChangeReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -529,6 +530,13 @@ fun PaperizeApp(
                 onSkipNonInteractiveChange = {
                     skipNonInteractive ->
                     settingsViewModel.onEvent(SettingsEvent.SetSkipNonInteractive(skipNonInteractive))
+                },
+                onChangeWallpaperNow = {
+                    val intent = Intent(WallpaperBootAndChangeReceiver.ACTION_SHORTCUT).apply {
+                        setClass(context, WallpaperBootAndChangeReceiver::class.java)
+                        addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
+                    }
+                    context.sendBroadcast(intent)
                 }
             )
         }
