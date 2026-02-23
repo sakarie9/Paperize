@@ -67,6 +67,7 @@ fun HomeScreen(
     onRefreshChange: (Boolean) -> Unit,
     onSkipLandscapeChange: (Boolean) -> Unit,
     onSkipNonInteractiveChange: (Boolean) -> Unit,
+    onOnlyNonInteractiveChange: (Boolean) -> Unit,
     onChangeWallpaperNow: () -> Unit,
 ) {
     val tabItems = getTabItems()
@@ -148,6 +149,7 @@ fun HomeScreen(
                         onRefreshChange = onRefreshChange,
                         onSkipLandscapeChange = onSkipLandscapeChange,
                         onSkipNonInteractiveChange = onSkipNonInteractiveChange,
+                        onOnlyNonInteractiveChange = onOnlyNonInteractiveChange,
                         onChangeWallpaperNow = onChangeWallpaperNow
                     )
                     else -> LibraryScreen(

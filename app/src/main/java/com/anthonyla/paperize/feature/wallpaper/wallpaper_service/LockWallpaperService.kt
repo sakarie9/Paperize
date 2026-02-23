@@ -23,6 +23,8 @@ import com.anthonyla.paperize.data.settings.SettingsDataStore
 import com.anthonyla.paperize.feature.wallpaper.domain.repository.AlbumRepository
 import com.anthonyla.paperize.feature.wallpaper.presentation.MainActivity
 import com.anthonyla.paperize.feature.wallpaper.presentation.settings_screen.SettingsState
+import com.anthonyla.paperize.feature.wallpaper.wallpaper_alarmmanager.DeferredWallpaperChange
+import com.anthonyla.paperize.feature.wallpaper.wallpaper_alarmmanager.DeferredWallpaperChangeStore
 import com.anthonyla.paperize.feature.wallpaper.tasker_shortcut.triggerWallpaperTaskerEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -43,6 +45,7 @@ class LockWallpaperService: Service() {
     private var homeInterval: Int = SettingsConstants.WALLPAPER_CHANGE_INTERVAL_DEFAULT
     private var lockInterval: Int = SettingsConstants.WALLPAPER_CHANGE_INTERVAL_DEFAULT
     private var type = Type.SINGLE.ordinal
+    private var deferredTrigger: Boolean = false
     private var isForeground = false
 
     enum class Actions {
@@ -71,6 +74,7 @@ class LockWallpaperService: Service() {
                     lockInterval = intent.getIntExtra("lockInterval", SettingsConstants.WALLPAPER_CHANGE_INTERVAL_DEFAULT)
                     scheduleSeparately = intent.getBooleanExtra("scheduleSeparately", false)
                     type = intent.getIntExtra("type", Type.SINGLE.ordinal)
+                    deferredTrigger = intent.getBooleanExtra("deferredTrigger", false)
                     workerTaskStart()
                 }
                 Actions.UPDATE.toString() -> workerTaskUpdate()
@@ -139,7 +143,21 @@ class LockWallpaperService: Service() {
             homeAlbumName = settingsDataStoreImpl.getString(SettingsConstants.HOME_ALBUM_NAME) ?: "",
             shuffle = settingsDataStoreImpl.getBoolean(SettingsConstants.SHUFFLE) ?: true,
             skipLandscape = settingsDataStoreImpl.getBoolean(SettingsConstants.SKIP_LANDSCAPE) ?: false,
-            skipNonInteractive = settingsDataStoreImpl.getBoolean(SettingsConstants.SKIP_NON_INTERACTIVE) ?: false
+            skipNonInteractive = settingsDataStoreImpl.getBoolean(SettingsConstants.SKIP_NON_INTERACTIVE) ?: false,
+            onlyNonInteractive = settingsDataStoreImpl.getBoolean(SettingsConstants.ONLY_NON_INTERACTIVE) ?: false
+        )
+    }
+
+    private fun deferToNextNonInteractive() {
+        DeferredWallpaperChangeStore.save(
+            this,
+            DeferredWallpaperChange(
+                target = DeferredWallpaperChangeStore.TARGET_LOCK,
+                homeInterval = homeInterval,
+                lockInterval = lockInterval,
+                scheduleSeparately = scheduleSeparately,
+                type = type
+            )
         )
     }
 
@@ -175,8 +193,23 @@ class LockWallpaperService: Service() {
                 return
             }
 
-            if (settings.skipNonInteractive){
-                val powerManager = context.getSystemService(POWER_SERVICE) as PowerManager
+            val powerManager = context.getSystemService(POWER_SERVICE) as PowerManager
+
+            if (settings.onlyNonInteractive && powerManager.isInteractive) {
+                deferToNextNonInteractive()
+                Log.d("PaperizeWallpaperChanger", "Deferring wallpaper change - waiting for non-interactive state")
+                onDestroy()
+                return
+            }
+
+            if (settings.onlyNonInteractive && !powerManager.isInteractive && !deferredTrigger) {
+                deferToNextNonInteractive()
+                Log.d("PaperizeWallpaperChanger", "Skip while already non-interactive - waiting for next screen-off deferred trigger")
+                onDestroy()
+                return
+            }
+
+            if (!settings.onlyNonInteractive && settings.skipNonInteractive){
                 if (!powerManager.isInteractive){
                     Log.d(
                         "PaperizeWallpaperChanger", "Skipping wallpaper change - device is in non-interactive state")

@@ -110,7 +110,8 @@ class SettingsViewModel @Inject constructor(
         settingsDataStoreImpl.getBooleanFlow(SettingsConstants.SHUFFLE),
         settingsDataStoreImpl.getBooleanFlow(SettingsConstants.REFRESH),
         settingsDataStoreImpl.getBooleanFlow(SettingsConstants.SKIP_LANDSCAPE),
-        settingsDataStoreImpl.getBooleanFlow(SettingsConstants.SKIP_NON_INTERACTIVE)
+        settingsDataStoreImpl.getBooleanFlow(SettingsConstants.SKIP_NON_INTERACTIVE),
+        settingsDataStoreImpl.getBooleanFlow(SettingsConstants.ONLY_NON_INTERACTIVE)
     ) { flows ->
         ScheduleSettings(
             scheduleSeparately = flows[0] as Boolean? ?: false,
@@ -124,6 +125,7 @@ class SettingsViewModel @Inject constructor(
             refresh = flows[9] as Boolean? ?: true,
             skipLandscape = flows[10] as Boolean? ?: false,
             skipNonInteractive = flows[11] as Boolean? ?: false,
+            onlyNonInteractive = flows[12] as Boolean? ?: false,
         )
     }
 
@@ -561,6 +563,19 @@ class SettingsViewModel @Inject constructor(
             is SettingsEvent.SetSkipNonInteractive -> {
                 viewModelScope.launch {
                     settingsDataStoreImpl.putBoolean(SettingsConstants.SKIP_NON_INTERACTIVE, event.skipNonInteractive)
+                    if (event.skipNonInteractive) {
+                        settingsDataStoreImpl.putBoolean(SettingsConstants.ONLY_NON_INTERACTIVE, false)
+                    }
+                }
+            }
+
+
+            is SettingsEvent.SetOnlyNonInteractive -> {
+                viewModelScope.launch {
+                    settingsDataStoreImpl.putBoolean(SettingsConstants.ONLY_NON_INTERACTIVE, event.onlyNonInteractive)
+                    if (event.onlyNonInteractive) {
+                        settingsDataStoreImpl.putBoolean(SettingsConstants.SKIP_NON_INTERACTIVE, false)
+                    }
                 }
             }
 
@@ -608,7 +623,8 @@ class SettingsViewModel @Inject constructor(
                         SettingsConstants.SHUFFLE,
                         SettingsConstants.REFRESH,
                         SettingsConstants.SKIP_LANDSCAPE,
-                        SettingsConstants.SKIP_NON_INTERACTIVE
+                        SettingsConstants.SKIP_NON_INTERACTIVE,
+                        SettingsConstants.ONLY_NON_INTERACTIVE
                     )
                     settingsDataStoreImpl.clear(keysToDelete)
                 }

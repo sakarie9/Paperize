@@ -531,6 +531,10 @@ fun PaperizeApp(
                     skipNonInteractive ->
                     settingsViewModel.onEvent(SettingsEvent.SetSkipNonInteractive(skipNonInteractive))
                 },
+                onOnlyNonInteractiveChange = {
+                    onlyNonInteractive ->
+                    settingsViewModel.onEvent(SettingsEvent.SetOnlyNonInteractive(onlyNonInteractive))
+                },
                 onChangeWallpaperNow = {
                     val intent = Intent(WallpaperBootAndChangeReceiver.ACTION_SHORTCUT).apply {
                         setClass(context, WallpaperBootAndChangeReceiver::class.java)

@@ -84,6 +84,7 @@ fun WallpaperScreen(
     onRefreshChange: (Boolean) -> Unit,
     onSkipLandscapeChange: (Boolean) -> Unit,
     onSkipNonInteractiveChange: (Boolean) -> Unit,
+    onOnlyNonInteractiveChange: (Boolean) -> Unit,
     onChangeWallpaperNow: () -> Unit
 ) {
     val shouldShowScreen = wallpaperSettings.setHomeWallpaper || wallpaperSettings.setLockWallpaper
@@ -328,6 +329,12 @@ fun WallpaperScreen(
                         description = R.string.prevent_changing_during_non_interactive_state,
                         checked = scheduleSettings.skipNonInteractive,
                         onCheckedChange = onSkipNonInteractiveChange
+                    )
+                    SettingSwitch(
+                        title = R.string.only_non_interactive_state,
+                        description = R.string.only_change_in_non_interactive_state,
+                        checked = scheduleSettings.onlyNonInteractive,
+                        onCheckedChange = onOnlyNonInteractiveChange
                     )
                 }
             }
