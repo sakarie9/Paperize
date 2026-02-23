@@ -72,7 +72,7 @@ class SettingsViewModel @Inject constructor(
         )
     }
 
-    private fun loadWallpaperSettingsFlow(): Flow<WallpaperSettings> = combine(
+    private fun loadWallpaperSettingsFlow(): Flow<WallpaperSettings> = combine<Any?, WallpaperSettings>(
         settingsDataStoreImpl.getBooleanFlow(SettingsConstants.ENABLE_CHANGER),
         settingsDataStoreImpl.getBooleanFlow(SettingsConstants.ENABLE_HOME_WALLPAPER),
         settingsDataStoreImpl.getBooleanFlow(SettingsConstants.ENABLE_LOCK_WALLPAPER),
@@ -98,7 +98,7 @@ class SettingsViewModel @Inject constructor(
         )
     }
 
-    private fun loadScheduleSettingsFlow(): Flow<ScheduleSettings> = combine(
+    private fun loadScheduleSettingsFlow(): Flow<ScheduleSettings> = combine<Any?, ScheduleSettings>(
         settingsDataStoreImpl.getBooleanFlow(SettingsConstants.SCHEDULE_SEPARATELY),
         settingsDataStoreImpl.getIntFlow(SettingsConstants.HOME_WALLPAPER_CHANGE_INTERVAL),
         settingsDataStoreImpl.getIntFlow(SettingsConstants.LOCK_WALLPAPER_CHANGE_INTERVAL),
@@ -127,7 +127,7 @@ class SettingsViewModel @Inject constructor(
         )
     }
 
-    private fun loadEffectSettingsFlow(): Flow<EffectSettings> = combine(
+    private fun loadEffectSettingsFlow(): Flow<EffectSettings> = combine<Any?, EffectSettings>(
         settingsDataStoreImpl.getBooleanFlow(SettingsConstants.DARKEN),
         settingsDataStoreImpl.getIntFlow(SettingsConstants.HOME_DARKEN_PERCENTAGE),
         settingsDataStoreImpl.getIntFlow(SettingsConstants.LOCK_DARKEN_PERCENTAGE),

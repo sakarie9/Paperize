@@ -623,6 +623,24 @@ fun isValidUri(context: Context, uriString: String?): Boolean {
     }
     val uri = decompressedUriString.toUri()
 
+    // Prefer probing actual readability first because some providers may report
+    // exists=false even when the Uri can still be opened and loaded.
+    try {
+        context.contentResolver.openInputStream(uri)?.use {
+            return true
+        }
+    } catch (e: Exception) {
+        Log.w("WallpaperUtil", "openInputStream validation failed for '$uri': $e")
+    }
+
+    try {
+        context.contentResolver.openFileDescriptor(uri, "r")?.use {
+            return true
+        }
+    } catch (e: Exception) {
+        Log.w("WallpaperUtil", "openFileDescriptor validation failed for '$uri': $e")
+    }
+
     return try {
         DocumentFileCompat.fromSingleUri(context, uri)?.exists() == true
     } catch (e: Exception) {
