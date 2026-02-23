@@ -13,6 +13,7 @@ import android.graphics.ImageDecoder
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RadialGradient
+import android.graphics.Rect
 import android.graphics.Shader
 import android.net.Uri
 import android.os.Build
@@ -217,6 +218,35 @@ fun retrieveBitmap(
 }
 
 private val SharedPaintFilterAntiAlias = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
+
+fun buildCenterCropHint(bitmap: Bitmap, targetWidth: Int, targetHeight: Int): Rect? {
+    if (targetWidth <= 0 || targetHeight <= 0 || bitmap.width <= 0 || bitmap.height <= 0) {
+        return null
+    }
+
+    val targetAspect = targetWidth.toFloat() / targetHeight.toFloat()
+    val bitmapAspect = bitmap.width.toFloat() / bitmap.height.toFloat()
+
+    val cropWidth: Int
+    val cropHeight: Int
+
+    if (bitmapAspect > targetAspect) {
+        // Bitmap is relatively wider: keep full height, crop width to match aspect ratio.
+        cropHeight = bitmap.height
+        cropWidth = (cropHeight * targetAspect).toInt().coerceAtMost(bitmap.width)
+    } else {
+        // Bitmap is relatively taller: keep full width, crop height to match aspect ratio.
+        cropWidth = bitmap.width
+        cropHeight = (cropWidth / targetAspect).toInt().coerceAtMost(bitmap.height)
+    }
+
+    val left = ((bitmap.width - cropWidth) / 2).coerceAtLeast(0)
+    val top = ((bitmap.height - cropHeight) / 2).coerceAtLeast(0)
+    val right = (left + cropWidth).coerceAtMost(bitmap.width)
+    val bottom = (top + cropHeight).coerceAtMost(bitmap.height)
+
+    return Rect(left, top, right, bottom)
+}
 
 /**
  * Scale a bitmap using the fit width method

@@ -7,6 +7,7 @@ import android.app.WallpaperManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Handler
 import android.os.HandlerThread
@@ -543,11 +544,16 @@ class HomeWallpaperService: Service() {
                                 settings.vignette, settings.homeVignettePercentage,
                                 settings.grayscale, settings.homeGrayscalePercentage
                             )?.let { homeImage ->
+                                val cropHint = if (scaling == ScalingConstants.NONE) {
+                                    buildCenterCropHint(homeImage, size.width, size.height)
+                                } else {
+                                    null
+                                }
                                 Log.d(
                                     "WallpaperResolution",
-                                    "HomeService.setWallpaper homeProcessed=${homeImage.width}x${homeImage.height}, config=${homeImage.config}, mutable=${homeImage.isMutable}"
+                                    "HomeService.setWallpaper homeProcessed=${homeImage.width}x${homeImage.height}, config=${homeImage.config}, mutable=${homeImage.isMutable}, cropHint=$cropHint"
                                 )
-                                setWallpaperSafely(homeImage, WallpaperManager.FLAG_SYSTEM, wallpaperManager)
+                                setWallpaperSafely(homeImage, WallpaperManager.FLAG_SYSTEM, wallpaperManager, cropHint)
                             }
 
                             processBitmap(
@@ -558,20 +564,30 @@ class HomeWallpaperService: Service() {
                                 settings.vignette, settings.lockVignettePercentage,
                                 settings.grayscale, settings.lockGrayscalePercentage
                             )?.let { lockImage ->
+                                val cropHint = if (scaling == ScalingConstants.NONE) {
+                                    buildCenterCropHint(lockImage, size.width, size.height)
+                                } else {
+                                    null
+                                }
                                 Log.d(
                                     "WallpaperResolution",
-                                    "HomeService.setWallpaper lockProcessed=${lockImage.width}x${lockImage.height}, config=${lockImage.config}, mutable=${lockImage.isMutable}"
+                                    "HomeService.setWallpaper lockProcessed=${lockImage.width}x${lockImage.height}, config=${lockImage.config}, mutable=${lockImage.isMutable}, cropHint=$cropHint"
                                 )
-                                setWallpaperSafely(lockImage, WallpaperManager.FLAG_LOCK, wallpaperManager)
+                                setWallpaperSafely(lockImage, WallpaperManager.FLAG_LOCK, wallpaperManager, cropHint)
                             }
                         }
                     } else {
                         processBitmap(size.width, size.height, bitmap, darken, darkenPercent, scaling, blur, blurPercent, vignette, vignettePercent, grayscale, grayscalePercent)?.let { image ->
+                            val cropHint = if (scaling == ScalingConstants.NONE) {
+                                buildCenterCropHint(image, size.width, size.height)
+                            } else {
+                                null
+                            }
                             Log.d(
                                 "WallpaperResolution",
-                                "HomeService.setWallpaper processed=${image.width}x${image.height}, config=${image.config}, mutable=${image.isMutable}"
+                                "HomeService.setWallpaper processed=${image.width}x${image.height}, config=${image.config}, mutable=${image.isMutable}, cropHint=$cropHint"
                             )
-                            setWallpaperSafely(image, WallpaperManager.FLAG_SYSTEM, wallpaperManager)
+                            setWallpaperSafely(image, WallpaperManager.FLAG_SYSTEM, wallpaperManager, cropHint)
                         }
                     }
                     context.triggerWallpaperTaskerEvent()
@@ -680,15 +696,20 @@ class HomeWallpaperService: Service() {
     }
 
     @RequiresPermission(Manifest.permission.SET_WALLPAPER)
-    private fun setWallpaperSafely(bitmap_s: Bitmap?, flag: Int, wallpaperManager: WallpaperManager) {
+    private fun setWallpaperSafely(
+        bitmap_s: Bitmap?,
+        flag: Int,
+        wallpaperManager: WallpaperManager,
+        cropHint: Rect? = null
+    ) {
         val maxRetries = 3
         for (attempt in 1..maxRetries) {
             try {
                 Log.d(
                     "WallpaperResolution",
-                    "HomeService.setWallpaperSafely attempt=$attempt flag=$flag bitmap=${bitmap_s?.width}x${bitmap_s?.height}, config=${bitmap_s?.config}, mutable=${bitmap_s?.isMutable}"
+                    "HomeService.setWallpaperSafely attempt=$attempt flag=$flag bitmap=${bitmap_s?.width}x${bitmap_s?.height}, config=${bitmap_s?.config}, mutable=${bitmap_s?.isMutable}, cropHint=$cropHint"
                 )
-                wallpaperManager.setBitmap(bitmap_s, null, true, flag)
+                wallpaperManager.setBitmap(bitmap_s, cropHint, true, flag)
                 return
             } catch (e: Exception) {
                 if (attempt == maxRetries) {

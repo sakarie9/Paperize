@@ -7,6 +7,7 @@ import android.app.WallpaperManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Handler
 import android.os.HandlerThread
@@ -423,11 +424,16 @@ class LockWallpaperService: Service() {
                         "LockService.setWallpaper retrievedBitmap=${bitmap.width}x${bitmap.height}, config=${bitmap.config}, mutable=${bitmap.isMutable}"
                     )
                     processBitmap(size.width, size.height, bitmap, darken, darkenPercent, scaling, blur, blurPercent, vignette, vignettePercent, grayscale, grayscalePercent)?.let { image ->
+                        val cropHint = if (scaling == ScalingConstants.NONE) {
+                            buildCenterCropHint(image, size.width, size.height)
+                        } else {
+                            null
+                        }
                         Log.d(
                             "WallpaperResolution",
-                            "LockService.setWallpaper processed=${image.width}x${image.height}, config=${image.config}, mutable=${image.isMutable}"
+                            "LockService.setWallpaper processed=${image.width}x${image.height}, config=${image.config}, mutable=${image.isMutable}, cropHint=$cropHint"
                         )
-                        setWallpaperSafely(image, WallpaperManager.FLAG_LOCK, wallpaperManager)
+                        setWallpaperSafely(image, WallpaperManager.FLAG_LOCK, wallpaperManager, cropHint)
                     }
                     context.triggerWallpaperTaskerEvent()
                     return true
@@ -442,15 +448,20 @@ class LockWallpaperService: Service() {
     }
 
     @RequiresPermission(Manifest.permission.SET_WALLPAPER)
-    private fun setWallpaperSafely(bitmap_s: Bitmap?, flag: Int, wallpaperManager: WallpaperManager) {
+    private fun setWallpaperSafely(
+        bitmap_s: Bitmap?,
+        flag: Int,
+        wallpaperManager: WallpaperManager,
+        cropHint: Rect? = null
+    ) {
         val maxRetries = 3
         for (attempt in 1..maxRetries) {
             try {
                 Log.d(
                     "WallpaperResolution",
-                    "LockService.setWallpaperSafely attempt=$attempt flag=$flag bitmap=${bitmap_s?.width}x${bitmap_s?.height}, config=${bitmap_s?.config}, mutable=${bitmap_s?.isMutable}"
+                    "LockService.setWallpaperSafely attempt=$attempt flag=$flag bitmap=${bitmap_s?.width}x${bitmap_s?.height}, config=${bitmap_s?.config}, mutable=${bitmap_s?.isMutable}, cropHint=$cropHint"
                 )
-                wallpaperManager.setBitmap(bitmap_s, null, true, flag)
+                wallpaperManager.setBitmap(bitmap_s, cropHint, true, flag)
                 return
             } catch (e: Exception) {
                 if (attempt == maxRetries) {
