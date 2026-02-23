@@ -16,7 +16,7 @@ class DeferredWallpaperTriggerReceiver : BroadcastReceiver() {
         private const val REQUEST_CODE_DEFERRED_HOME = 10001
         private const val REQUEST_CODE_DEFERRED_LOCK = 10002
         private const val REQUEST_CODE_DEFERRED_CHECK = 10003
-        private const val DEFERRED_CHECK_DELAY_MILLIS = 60_000L
+        private const val DEFERRED_CHECK_DELAY_MILLIS = 5 * 60_000L
 
         fun scheduleDeferredCheck(context: Context, delayMillis: Long = DEFERRED_CHECK_DELAY_MILLIS) {
             val intent = Intent(context, DeferredWallpaperTriggerReceiver::class.java).apply {
