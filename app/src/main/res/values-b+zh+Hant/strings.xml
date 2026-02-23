@@ -191,4 +191,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">你想現在更換桌布嗎？</string>
+  <string name="only_non_interactive_state">僅在非互動狀態下更換</string>
+  <string name="only_change_in_non_interactive_state">僅在裝置處於非互動狀態時更換桌布（例如螢幕關閉）。若在互動狀態下觸發，則延後執行，且只保留最新的待處理更換。</string>
+  <string name="open_with">開啟方式</string>
+  <string name="no_app_available_to_open_image">沒有可用來開啟此圖片的應用程式</string>
 </resources>

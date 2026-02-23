@@ -211,4 +211,9 @@
   <string name="changing_wallpaper">تغيير الخلفية…</string>
   <string name="skip_landscape_mode">تخطي في الوضع الأفقي</string>
   <string name="skip_non_interactive_state">تخطي حالة غير تفاعلية</string>
+  <string name="change_wallpaper_now_question">هل تريد تغيير الخلفية الآن؟</string>
+  <string name="only_non_interactive_state">التغيير فقط في الحالة غير التفاعلية</string>
+  <string name="only_change_in_non_interactive_state">غيّر الخلفيات فقط عندما يكون الجهاز في حالة غير تفاعلية (مثلًا عندما تكون الشاشة مطفأة). إذا تم التشغيل أثناء الحالة التفاعلية، فأجّل التنفيذ واحتفِظ فقط بأحدث تغيير مُعلّق.</string>
+  <string name="open_with">فتح باستخدام</string>
+  <string name="no_app_available_to_open_image">لا يتوفر تطبيق لفتح هذه الصورة</string>
 </resources>

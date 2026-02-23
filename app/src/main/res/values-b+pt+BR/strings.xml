@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Alterando plano de fundo…</string>
   <string name="skip_landscape_mode">Pular em modo paisagem</string>
   <string name="skip_non_interactive_state">Pular em estado não interativo</string>
+  <string name="change_wallpaper_now_question">Deseja alterar o papel de parede agora?</string>
+  <string name="only_non_interactive_state">Alterar apenas em estado não interativo</string>
+  <string name="only_change_in_non_interactive_state">Altere os papéis de parede apenas quando o dispositivo estiver em estado não interativo (por exemplo, com a tela desligada). Se for acionado enquanto estiver interativo, adie e mantenha apenas a alteração pendente mais recente.</string>
+  <string name="open_with">Abrir com</string>
+  <string name="no_app_available_to_open_image">Nenhum app disponível para abrir esta imagem</string>
 </resources>

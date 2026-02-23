@@ -203,4 +203,9 @@
   <string name="changing_wallpaper">Změna tapety…</string>
   <string name="skip_landscape_mode">Přeskočit v režimu na šířku</string>
   <string name="skip_non_interactive_state">Přeskočit v neinteraktivním stavu</string>
+  <string name="change_wallpaper_now_question">Chcete teď změnit tapetu?</string>
+  <string name="only_non_interactive_state">Měnit pouze v neinteraktivním stavu</string>
+  <string name="only_change_in_non_interactive_state">Tapety měňte pouze tehdy, když je zařízení v neinteraktivním stavu (např. když je obrazovka vypnutá). Pokud se to spustí v interaktivním stavu, odložte to a ponechte jen poslední čekající změnu.</string>
+  <string name="open_with">Otevřít pomocí</string>
+  <string name="no_app_available_to_open_image">Není k dispozici žádná aplikace pro otevření tohoto obrázku</string>
 </resources>

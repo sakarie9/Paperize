@@ -191,4 +191,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">Apa sampeyan pengin ngganti wallpaper saiki?</string>
+  <string name="only_non_interactive_state">Mung ganti ing kahanan non-interaktif</string>
+  <string name="only_change_in_non_interactive_state">Mung ganti wallpaper nalika piranti ana ing kahanan non-interaktif (contone, layar mati). Yen kapicu nalika interaktif, tunda lan simpen mung pangowahan sing nunggu paling anyar.</string>
+  <string name="open_with">Bukak nganggo</string>
+  <string name="no_app_available_to_open_image">Ora ana aplikasi kanggo mbukak gambar iki</string>
 </resources>

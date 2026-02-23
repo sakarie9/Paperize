@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">Vols canviar el fons de pantalla ara?</string>
+  <string name="only_non_interactive_state">Canvia només en estat no interactiu</string>
+  <string name="only_change_in_non_interactive_state">Canvia els fons de pantalla només quan el dispositiu estigui en estat no interactiu (p. ex., amb la pantalla apagada). Si s'activa mentre és interactiu, ajorna-ho i conserva només el canvi pendent més recent.</string>
+  <string name="open_with">Obre amb</string>
+  <string name="no_app_available_to_open_image">No hi ha cap aplicació disponible per obrir aquesta imatge</string>
 </resources>

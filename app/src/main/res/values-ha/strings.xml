@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">Kana son canza bangon waya yanzu?</string>
+  <string name="only_non_interactive_state">Canza kawai a yanayin da ba na hulɗa ba</string>
+  <string name="only_change_in_non_interactive_state">Canza bangon waya kawai lokacin da na'urar ke cikin yanayin da ba na hulɗa ba (misali, allon a kashe yake). Idan an tayar da shi yayin yanayin hulɗa, jinkirta shi kuma ka bar sabon canjin da ke jira kawai.</string>
+  <string name="open_with">Buɗe da</string>
+  <string name="no_app_available_to_open_image">Babu manhaja da ake da ita don buɗe wannan hoton</string>
 </resources>

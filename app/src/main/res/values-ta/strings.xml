@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">நீங்கள் இப்போது வால்பேப்பரை மாற்ற விரும்புகிறீர்களா?</string>
+  <string name="only_non_interactive_state">இணையாடாத நிலையில் மட்டும் மாற்றவும்</string>
+  <string name="only_change_in_non_interactive_state">சாதனம் இணையாடாத நிலையில் இருக்கும்போது மட்டும் வால்பேப்பர்களை மாற்றவும் (எ.கா., திரை அணைந்திருக்கும்போது). இணையாடும் நிலையில் இது தொடங்கப்பட்டால், அதை ஒத்திவைத்து சமீபத்திய நிலுவை மாற்றத்தை மட்டும் வைத்திருங்கள்.</string>
+  <string name="open_with">இதன் மூலம் திற</string>
+  <string name="no_app_available_to_open_image">இந்த படத்தை திறக்க எந்த பயன்பாடும் கிடைக்கவில்லை</string>
 </resources>

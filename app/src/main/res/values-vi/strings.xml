@@ -191,4 +191,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">Bạn có muốn thay đổi hình nền ngay bây giờ không?</string>
+  <string name="only_non_interactive_state">Chỉ thay đổi ở trạng thái không tương tác</string>
+  <string name="only_change_in_non_interactive_state">Chỉ thay đổi hình nền khi thiết bị ở trạng thái không tương tác (ví dụ: màn hình tắt). Nếu được kích hoạt khi đang tương tác, hãy hoãn lại và chỉ giữ thay đổi đang chờ mới nhất.</string>
+  <string name="open_with">Mở bằng</string>
+  <string name="no_app_available_to_open_image">Không có ứng dụng nào để mở hình ảnh này</string>
 </resources>

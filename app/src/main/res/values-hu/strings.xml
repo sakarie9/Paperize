@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">Szeretné most megváltoztatni a háttérképet?</string>
+  <string name="only_non_interactive_state">Csak nem interaktív állapotban módosítás</string>
+  <string name="only_change_in_non_interactive_state">A háttérképeket csak akkor módosítsa, amikor az eszköz nem interaktív állapotban van (pl. a képernyő ki van kapcsolva). Ha interaktív állapotban indul el, halassza el, és csak a legutóbbi függőben lévő módosítást tartsa meg.</string>
+  <string name="open_with">Megnyitás ezzel</string>
+  <string name="no_app_available_to_open_image">Nincs alkalmazás a kép megnyitásához</string>
 </resources>

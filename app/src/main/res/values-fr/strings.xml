@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Changement du fond d\'écran…</string>
   <string name="skip_landscape_mode">Passer en mode paysage</string>
   <string name="skip_non_interactive_state">Passer dans un état non interactif</string>
+  <string name="change_wallpaper_now_question">Voulez-vous changer le fond d’écran maintenant ?</string>
+  <string name="only_non_interactive_state">Changer uniquement en état non interactif</string>
+  <string name="only_change_in_non_interactive_state">Changez les fonds d’écran uniquement lorsque l’appareil est en état non interactif (p. ex. écran éteint). Si cela est déclenché en état interactif, différez l’action et conservez uniquement le changement en attente le plus récent.</string>
+  <string name="open_with">Ouvrir avec</string>
+  <string name="no_app_available_to_open_image">Aucune application disponible pour ouvrir cette image</string>
 </resources>

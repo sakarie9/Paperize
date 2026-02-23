@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">మీరు ఇప్పుడు వాల్‌పేపర్‌ను మార్చాలనుకుంటున్నారా?</string>
+  <string name="only_non_interactive_state">నాన్-ఇంటరాక్టివ్ స్థితిలో మాత్రమే మార్చండి</string>
+  <string name="only_change_in_non_interactive_state">పరికరం నాన్-ఇంటరాక్టివ్ స్థితిలో ఉన్నప్పుడు మాత్రమే వాల్‌పేపర్‌లను మార్చండి (ఉదా., స్క్రీన్ ఆఫ్‌లో ఉన్నప్పుడు). ఇంటరాక్టివ్ స్థితిలో ట్రిగర్ అయితే, దాన్ని వాయిదా వేసి తాజా పెండింగ్ మార్పును మాత్రమే ఉంచండి.</string>
+  <string name="open_with">దీనితో తెరువు</string>
+  <string name="no_app_available_to_open_image">ఈ చిత్రాన్ని తెరవడానికి ఏ యాప్ అందుబాటులో లేదు</string>
 </resources>

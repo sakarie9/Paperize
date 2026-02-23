@@ -203,4 +203,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">У ландшафтному режимі пропустити</string>
   <string name="skip_non_interactive_state">Пропустити у неінтерактивному стані</string>
+  <string name="change_wallpaper_now_question">Змінити шпалери зараз?</string>
+  <string name="only_non_interactive_state">Змінювати лише в неінтерактивному стані</string>
+  <string name="only_change_in_non_interactive_state">Змінюйте шпалери лише коли пристрій у неінтерактивному стані (наприклад, коли екран вимкнено). Якщо спрацює в інтерактивному стані, відкладіть і залиште лише останню зміну, що очікує.</string>
+  <string name="open_with">Відкрити за допомогою</string>
+  <string name="no_app_available_to_open_image">Немає програми для відкриття цього зображення</string>
 </resources>

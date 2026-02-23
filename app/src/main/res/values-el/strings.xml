@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Αλλαγή ταπετσαρίας…</string>
   <string name="skip_landscape_mode">Παράλειψη στην οριζόντια λειτουργία</string>
   <string name="skip_non_interactive_state">Παράλειψη σε μη διαδραστική κατάσταση</string>
+  <string name="change_wallpaper_now_question">Θέλετε να αλλάξετε την ταπετσαρία τώρα;</string>
+  <string name="only_non_interactive_state">Αλλαγή μόνο σε μη διαδραστική κατάσταση</string>
+  <string name="only_change_in_non_interactive_state">Να αλλάζουν οι ταπετσαρίες μόνο όταν η συσκευή είναι σε μη διαδραστική κατάσταση (π.χ. όταν η οθόνη είναι κλειστή). Αν ενεργοποιηθεί ενώ είναι διαδραστική, αναβάλετέ το και κρατήστε μόνο την πιο πρόσφατη εκκρεμή αλλαγή.</string>
+  <string name="open_with">Άνοιγμα με</string>
+  <string name="no_app_available_to_open_image">Δεν υπάρχει διαθέσιμη εφαρμογή για άνοιγμα αυτής της εικόνας</string>
 </resources>

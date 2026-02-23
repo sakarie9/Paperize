@@ -199,4 +199,9 @@
   <string name="changing_wallpaper">Se schimbă imaginea de fundal…</string>
   <string name="skip_landscape_mode">Sari în modul peisaj</string>
   <string name="skip_non_interactive_state">Omite starea non-interactivă</string>
+  <string name="change_wallpaper_now_question">Doriți să schimbați acum imaginea de fundal?</string>
+  <string name="only_non_interactive_state">Schimbă doar în stare non-interactivă</string>
+  <string name="only_change_in_non_interactive_state">Schimbați imaginile de fundal doar când dispozitivul este în stare non-interactivă (de ex., când ecranul este oprit). Dacă este declanșat în stare interactivă, amânați și păstrați doar cea mai recentă schimbare în așteptare.</string>
+  <string name="open_with">Deschide cu</string>
+  <string name="no_app_available_to_open_image">Nu există nicio aplicație disponibilă pentru a deschide această imagine</string>
 </resources>

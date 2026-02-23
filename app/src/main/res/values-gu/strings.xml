@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">શું તમે હવે વૉલપેપર બદલવા માંગો છો?</string>
+  <string name="only_non_interactive_state">ફક્ત નોન-ઇન્ટરએક્ટિવ સ્થિતિમાં બદલો</string>
+  <string name="only_change_in_non_interactive_state">ડિવાઇસ નોન-ઇન્ટરએક્ટિવ સ્થિતિમાં હોય ત્યારે જ વૉલપેપર બદલો (ઉદાહરણ તરીકે, સ્ક્રીન બંધ હોય). ઇન્ટરએક્ટિવ સ્થિતિમાં ટ્રિગર થાય તો, તેને મુલતવી રાખો અને ફક્ત તાજું બાકી રહેલું બદલાવ જ રાખો.</string>
+  <string name="open_with">આની સાથે ખોલો</string>
+  <string name="no_app_available_to_open_image">આ છબી ખોલવા માટે કોઈ એપ ઉપલબ્ધ નથી</string>
 </resources>

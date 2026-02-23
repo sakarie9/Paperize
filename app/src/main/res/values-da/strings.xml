@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Ændrer baggrund…</string>
   <string name="skip_landscape_mode">Spring over i liggende tilstand</string>
   <string name="skip_non_interactive_state">Spring over i ikke-interaktiv tilstand</string>
+  <string name="change_wallpaper_now_question">Vil du ændre baggrunden nu?</string>
+  <string name="only_non_interactive_state">Skift kun i ikke-interaktiv tilstand</string>
+  <string name="only_change_in_non_interactive_state">Skift kun baggrunde, når enheden er i ikke-interaktiv tilstand (f.eks. når skærmen er slukket). Hvis det udløses under interaktiv tilstand, udsæt det og behold kun den seneste ventende ændring.</string>
+  <string name="open_with">Åbn med</string>
+  <string name="no_app_available_to_open_image">Ingen app tilgængelig til at åbne dette billede</string>
 </resources>

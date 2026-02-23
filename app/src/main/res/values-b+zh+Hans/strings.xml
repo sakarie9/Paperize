@@ -191,4 +191,9 @@
   <string name="changing_wallpaper">更改壁纸…</string>
   <string name="skip_landscape_mode">在横屏模式中跳过</string>
   <string name="skip_non_interactive_state">在非交互状态中跳过</string>
+  <string name="change_wallpaper_now_question">你想现在更换壁纸吗？</string>
+  <string name="only_non_interactive_state">仅在非交互状态下更换</string>
+  <string name="only_change_in_non_interactive_state">仅当设备处于非交互状态时更换壁纸（例如屏幕关闭）。如果在交互状态下触发，则延后执行，并且只保留最新的待处理更换。</string>
+  <string name="open_with">打开方式</string>
+  <string name="no_app_available_to_open_image">没有可用于打开此图片的应用</string>
 </resources>

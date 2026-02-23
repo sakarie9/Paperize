@@ -191,4 +191,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">지금 배경화면을 변경하시겠습니까?</string>
+  <string name="only_non_interactive_state">비대화형 상태에서만 변경</string>
+  <string name="only_change_in_non_interactive_state">기기가 비대화형 상태일 때만 배경화면을 변경합니다(예: 화면 꺼짐). 대화형 상태에서 트리거되면 연기하고 가장 최근의 대기 중 변경만 유지합니다.</string>
+  <string name="open_with">다음으로 열기</string>
+  <string name="no_app_available_to_open_image">이 이미지를 열 수 있는 앱이 없습니다</string>
 </resources>

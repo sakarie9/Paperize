@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">तुम्हाला आत्ता वॉलपेपर बदलायचा आहे का?</string>
+  <string name="only_non_interactive_state">फक्त नॉन-इंटरॅक्टिव्ह स्थितीत बदला</string>
+  <string name="only_change_in_non_interactive_state">डिव्हाइस नॉन-इंटरॅक्टिव्ह स्थितीत असताना (उदा. स्क्रीन बंद असताना)च वॉलपेपर बदला. इंटरॅक्टिव्ह स्थितीत ट्रिगर झाल्यास, ते पुढे ढकला आणि फक्त सर्वात अलीकडील प्रलंबित बदल ठेवा.</string>
+  <string name="open_with">याच्या सहाय्याने उघडा</string>
+  <string name="no_app_available_to_open_image">ही प्रतिमा उघडण्यासाठी कोणतेही ॲप उपलब्ध नाही</string>
 </resources>

@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Cambiando fondo de pantalla…</string>
   <string name="skip_landscape_mode">Saltar en modo apaisado</string>
   <string name="skip_non_interactive_state">Saltar en estado no interactivo</string>
+  <string name="change_wallpaper_now_question">¿Quieres cambiar el fondo de pantalla ahora?</string>
+  <string name="only_non_interactive_state">Cambiar solo en estado no interactivo</string>
+  <string name="only_change_in_non_interactive_state">Cambia los fondos de pantalla solo cuando el dispositivo esté en estado no interactivo (p. ej., con la pantalla apagada). Si se activa mientras está interactivo, aplázalo y conserva solo el cambio pendiente más reciente.</string>
+  <string name="open_with">Abrir con</string>
+  <string name="no_app_available_to_open_image">No hay ninguna aplicación disponible para abrir esta imagen</string>
 </resources>

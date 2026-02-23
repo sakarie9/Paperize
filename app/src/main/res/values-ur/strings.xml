@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">کیا آپ ابھی وال پیپر تبدیل کرنا چاہتے ہیں؟</string>
+  <string name="only_non_interactive_state">صرف غیر تعاملی حالت میں تبدیل کریں</string>
+  <string name="only_change_in_non_interactive_state">وال پیپر صرف اسی وقت تبدیل کریں جب ڈیوائس غیر تعاملی حالت میں ہو (مثلاً اسکرین بند ہو)۔ اگر تعاملی حالت میں ٹرگر ہو تو اسے مؤخر کریں اور صرف تازہ ترین زیرِ التوا تبدیلی برقرار رکھیں۔</string>
+  <string name="open_with">اس کے ذریعے کھولیں</string>
+  <string name="no_app_available_to_open_image">اس تصویر کو کھولنے کے لیے کوئی ایپ دستیاب نہیں</string>
 </resources>

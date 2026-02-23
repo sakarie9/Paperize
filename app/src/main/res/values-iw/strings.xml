@@ -203,4 +203,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">האם ברצונך לשנות את הטפט עכשיו?</string>
+  <string name="only_non_interactive_state">לשנות רק במצב לא אינטראקטיבי</string>
+  <string name="only_change_in_non_interactive_state">שנה טפטים רק כשהמכשיר במצב לא אינטראקטיבי (למשל כשהמסך כבוי). אם הפעולה מופעלת בזמן מצב אינטראקטיבי, דחה אותה ושמור רק את השינוי הממתין האחרון.</string>
+  <string name="open_with">פתח באמצעות</string>
+  <string name="no_app_available_to_open_image">אין אפליקציה זמינה לפתיחת תמונה זו</string>
 </resources>

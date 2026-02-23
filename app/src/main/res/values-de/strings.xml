@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Hintergrund wird geändert…</string>
   <string name="skip_landscape_mode">Im Querformat überspringen</string>
   <string name="skip_non_interactive_state">Nicht interaktiven Status überspringen</string>
+  <string name="change_wallpaper_now_question">Möchtest du das Hintergrundbild jetzt ändern?</string>
+  <string name="only_non_interactive_state">Nur im nicht-interaktiven Zustand ändern</string>
+  <string name="only_change_in_non_interactive_state">Hintergrundbilder nur ändern, wenn das Gerät nicht interaktiv ist (z. B. bei ausgeschaltetem Bildschirm). Wenn dies im interaktiven Zustand ausgelöst wird, verschieben und nur die neueste ausstehende Änderung behalten.</string>
+  <string name="open_with">Öffnen mit</string>
+  <string name="no_app_available_to_open_image">Keine App verfügbar, um dieses Bild zu öffnen</string>
 </resources>

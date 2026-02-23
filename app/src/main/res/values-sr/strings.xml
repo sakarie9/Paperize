@@ -199,4 +199,9 @@
   <string name="changing_wallpaper">Changing wallpaper…</string>
   <string name="skip_landscape_mode">Skip in landscape mode</string>
   <string name="skip_non_interactive_state">Skip in non-interactive state</string>
+  <string name="change_wallpaper_now_question">Да ли желите сада да промените позадину?</string>
+  <string name="only_non_interactive_state">Мењај само у неинтерактивном стању</string>
+  <string name="only_change_in_non_interactive_state">Мењај позадине само када је уређај у неинтерактивном стању (нпр. када је екран искључен). Ако се покрене док је у интерактивном стању, одложи и задржи само најновију промену на чекању.</string>
+  <string name="open_with">Отвори помоћу</string>
+  <string name="no_app_available_to_open_image">Ниједна апликација није доступна за отварање ове слике</string>
 </resources>

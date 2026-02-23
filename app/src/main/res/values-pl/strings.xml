@@ -203,4 +203,9 @@
   <string name="changing_wallpaper">Zmiana tapety…</string>
   <string name="skip_landscape_mode">Pomiń w trybie poziomym</string>
   <string name="skip_non_interactive_state">Pomiń w stanie nieinteraktywnym</string>
+  <string name="change_wallpaper_now_question">Czy chcesz teraz zmienić tapetę?</string>
+  <string name="only_non_interactive_state">Zmieniaj tylko w stanie nieinteraktywnym</string>
+  <string name="only_change_in_non_interactive_state">Zmieniaj tapety tylko wtedy, gdy urządzenie jest w stanie nieinteraktywnym (np. gdy ekran jest wyłączony). Jeśli zostanie to wywołane w stanie interaktywnym, odłóż to i zachowaj tylko najnowszą oczekującą zmianę.</string>
+  <string name="open_with">Otwórz za pomocą</string>
+  <string name="no_app_available_to_open_image">Brak aplikacji do otwarcia tego obrazu</string>
 </resources>

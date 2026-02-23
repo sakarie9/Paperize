@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Modifica sfondo…</string>
   <string name="skip_landscape_mode">Salta in modalità orizzontale</string>
   <string name="skip_non_interactive_state">Salta in stato non interattivo</string>
+  <string name="change_wallpaper_now_question">Vuoi cambiare lo sfondo adesso?</string>
+  <string name="only_non_interactive_state">Cambia solo in stato non interattivo</string>
+  <string name="only_change_in_non_interactive_state">Cambia gli sfondi solo quando il dispositivo è in stato non interattivo (ad es. schermo spento). Se viene attivato mentre è interattivo, rimanda e mantieni solo la modifica in sospeso più recente.</string>
+  <string name="open_with">Apri con</string>
+  <string name="no_app_available_to_open_image">Nessuna app disponibile per aprire questa immagine</string>
 </resources>

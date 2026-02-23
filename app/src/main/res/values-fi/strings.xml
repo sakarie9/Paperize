@@ -195,4 +195,9 @@
   <string name="changing_wallpaper">Muutetaan taustakuvaa…</string>
   <string name="skip_landscape_mode">Ohita vaakatilassa</string>
   <string name="skip_non_interactive_state">Ohita ei-interaktiivisessa tilassa</string>
+  <string name="change_wallpaper_now_question">Haluatko vaihtaa taustakuvan nyt?</string>
+  <string name="only_non_interactive_state">Vaihda vain ei-interaktiivisessa tilassa</string>
+  <string name="only_change_in_non_interactive_state">Vaihda taustakuvia vain, kun laite on ei-interaktiivisessa tilassa (esim. näyttö on pois päältä). Jos tämä käynnistyy interaktiivisessa tilassa, lykkää sitä ja säilytä vain uusin odottava muutos.</string>
+  <string name="open_with">Avaa sovelluksella</string>
+  <string name="no_app_available_to_open_image">Tämän kuvan avaamiseen ei ole saatavilla sovellusta</string>
 </resources>
