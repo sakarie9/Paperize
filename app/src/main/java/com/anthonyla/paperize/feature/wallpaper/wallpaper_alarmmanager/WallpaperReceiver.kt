@@ -67,6 +67,7 @@ class WallpaperReceiver : BroadcastReceiver() {
                     val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
                     if (powerManager.isInteractive) {
                         Log.d(TAG, "Only-non-interactive active and device interactive: defer until next screen off")
+                        shouldScheduleExactAlarm = false
                         deferLatestRequest(
                             context = context,
                             type = type,
@@ -76,10 +77,24 @@ class WallpaperReceiver : BroadcastReceiver() {
                             lockInterval = lockInterval,
                             scheduleSeparately = scheduleSeparately
                         )
+                        updateDeferredNextTimeDisplay(
+                            type = type,
+                            setHome = setHome,
+                            setLock = setLock,
+                            homeInterval = homeInterval,
+                            lockInterval = lockInterval
+                        )
                         DeferredScreenOffListenerService.start(context)
                     } else {
                         Log.d(TAG, "Only-non-interactive active and device already non-interactive: skip this due event")
                         shouldScheduleExactAlarm = false
+                        val retryMinutes = max(
+                            when {
+                                scheduleSeparately && type == Type.LOCK.ordinal -> lockInterval
+                                else -> homeInterval
+                            },
+                            15
+                        )
                         scheduleIdleFriendlyRetry(
                             context = context,
                             sourceIntent = intent,
@@ -91,6 +106,12 @@ class WallpaperReceiver : BroadcastReceiver() {
                             setLock = setLock,
                             changeStartTime = changeStartTime,
                             startTime = startTime
+                        )
+                        updateRetryNextTimeDisplay(
+                            type = type,
+                            setHome = setHome,
+                            setLock = setLock,
+                            retryMinutes = retryMinutes
                         )
                     }
                 } else {
@@ -114,10 +135,6 @@ class WallpaperReceiver : BroadcastReceiver() {
                 }
 
                 if (shouldScheduleExactAlarm) {
-                    val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
-                    val currentTime = LocalDateTime.now()
-                    settingsDataStore.putString(SettingsConstants.LAST_SET_TIME, currentTime.format(formatter))
-
                     val homeNext = settingsDataStore.getString(SettingsConstants.HOME_NEXT_SET_TIME)
                     val lockNext = settingsDataStore.getString(SettingsConstants.LOCK_NEXT_SET_TIME)
 
@@ -271,5 +288,88 @@ class WallpaperReceiver : BroadcastReceiver() {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.setAndAllowWhileIdle(AlarmManager.RTC, triggerAt, pendingIntent)
         Log.d(TAG, "Scheduled idle-friendly retry in ${retryMinutes}m for type=$type")
+    }
+
+    private suspend fun updateDeferredNextTimeDisplay(
+        type: Int,
+        setHome: Boolean,
+        setLock: Boolean,
+        homeInterval: Int,
+        lockInterval: Int,
+    ) {
+        val now = LocalDateTime.now().withNano(0)
+        val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+
+        suspend fun computeFutureFromRaw(rawKey: String, intervalMinutes: Int): LocalDateTime {
+            val raw = settingsDataStore.getString(rawKey)
+            val base = runCatching { LocalDateTime.parse(raw) }.getOrElse { now }
+            var next = base.plusMinutes(intervalMinutes.toLong())
+            while (!next.isAfter(now)) {
+                next = next.plusMinutes(intervalMinutes.toLong())
+            }
+            return next.withSecond(0).withNano(0)
+        }
+
+        var homeNextCandidate = runCatching {
+            LocalDateTime.parse(settingsDataStore.getString(SettingsConstants.HOME_NEXT_SET_TIME))
+        }.getOrNull()
+        var lockNextCandidate = runCatching {
+            LocalDateTime.parse(settingsDataStore.getString(SettingsConstants.LOCK_NEXT_SET_TIME))
+        }.getOrNull()
+
+        when (type) {
+            Type.HOME.ordinal -> {
+                homeNextCandidate = computeFutureFromRaw(SettingsConstants.HOME_LAST_SET_TIME_RAW, homeInterval)
+                settingsDataStore.putString(SettingsConstants.HOME_NEXT_SET_TIME, homeNextCandidate.toString())
+            }
+
+            Type.LOCK.ordinal -> {
+                lockNextCandidate = computeFutureFromRaw(SettingsConstants.LOCK_LAST_SET_TIME_RAW, lockInterval)
+                settingsDataStore.putString(SettingsConstants.LOCK_NEXT_SET_TIME, lockNextCandidate.toString())
+            }
+
+            else -> {
+                val singleNext = computeFutureFromRaw(SettingsConstants.HOME_LAST_SET_TIME_RAW, homeInterval)
+                if (setHome) {
+                    homeNextCandidate = singleNext
+                    settingsDataStore.putString(SettingsConstants.HOME_NEXT_SET_TIME, singleNext.toString())
+                }
+                if (setLock) {
+                    lockNextCandidate = singleNext
+                    settingsDataStore.putString(SettingsConstants.LOCK_NEXT_SET_TIME, singleNext.toString())
+                }
+            }
+        }
+
+        val nextSetTimeForDisplay = listOfNotNull(homeNextCandidate, lockNextCandidate)
+            .filter { it.isAfter(now) }
+            .minOrNull()
+            ?: now.plusMinutes(homeInterval.toLong()).withSecond(0).withNano(0)
+
+        settingsDataStore.putString(SettingsConstants.NEXT_SET_TIME, nextSetTimeForDisplay.format(formatter))
+    }
+
+    private suspend fun updateRetryNextTimeDisplay(
+        type: Int,
+        setHome: Boolean,
+        setLock: Boolean,
+        retryMinutes: Int,
+    ) {
+        val nextRetry = LocalDateTime.now()
+            .plusMinutes(retryMinutes.toLong())
+            .withSecond(0)
+            .withNano(0)
+        val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+
+        when (type) {
+            Type.HOME.ordinal -> settingsDataStore.putString(SettingsConstants.HOME_NEXT_SET_TIME, nextRetry.toString())
+            Type.LOCK.ordinal -> settingsDataStore.putString(SettingsConstants.LOCK_NEXT_SET_TIME, nextRetry.toString())
+            else -> {
+                if (setHome) settingsDataStore.putString(SettingsConstants.HOME_NEXT_SET_TIME, nextRetry.toString())
+                if (setLock) settingsDataStore.putString(SettingsConstants.LOCK_NEXT_SET_TIME, nextRetry.toString())
+            }
+        }
+
+        settingsDataStore.putString(SettingsConstants.NEXT_SET_TIME, nextRetry.format(formatter))
     }
 }

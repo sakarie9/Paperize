@@ -23,9 +23,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -63,11 +60,6 @@ class DeferredScreenOffListenerService : Service() {
                 val triggered = executeDeferredChange(context, change)
                 if (triggered) {
                     scheduleNextAlarm(context, change)
-                    val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
-                    settingsDataStore.putString(
-                        SettingsConstants.LAST_SET_TIME,
-                        LocalDateTime.now().format(formatter)
-                    )
                 } else {
                     DeferredWallpaperChangeStore.save(context, change)
                 }
@@ -151,7 +143,7 @@ class DeferredScreenOffListenerService : Service() {
 
         scheduler.scheduleWallpaperAlarm(
             wallpaperAlarmItem = alarmItem,
-            origin = null,
+            origin = change.type,
             changeImmediate = false,
             cancelImmediate = false,
             setAlarm = true,

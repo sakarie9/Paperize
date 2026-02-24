@@ -33,6 +33,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -495,6 +498,7 @@ class LockWallpaperService: Service() {
                             "LockService.setWallpaper processed=${image.width}x${image.height}, config=${image.config}, mutable=${image.isMutable}, cropHint=$cropHint"
                         )
                         setWallpaperSafely(image, WallpaperManager.FLAG_LOCK, wallpaperManager, cropHint)
+                        recordWallpaperSet(lock = true)
                     }
                     context.triggerWallpaperTaskerEvent()
                     return true
@@ -506,6 +510,16 @@ class LockWallpaperService: Service() {
             }
         }
         return false
+    }
+
+    private fun recordWallpaperSet(lock: Boolean = false) {
+        if (!lock) return
+        CoroutineScope(Dispatchers.IO).launch {
+            val now = LocalDateTime.now().withNano(0)
+            val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+            settingsDataStoreImpl.putString(SettingsConstants.LAST_SET_TIME, now.format(formatter))
+            settingsDataStoreImpl.putString(SettingsConstants.LOCK_LAST_SET_TIME_RAW, now.toString())
+        }
     }
 
     @RequiresPermission(Manifest.permission.SET_WALLPAPER)

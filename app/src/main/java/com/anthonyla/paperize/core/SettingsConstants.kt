@@ -24,6 +24,8 @@ object SettingsConstants {
     const val FIRST_LAUNCH = "first_launch"
     const val FIRST_SET = "first_set"
     const val LAST_SET_TIME = "last_set_time"
+    const val HOME_LAST_SET_TIME_RAW = "home_last_set_time_raw"
+    const val LOCK_LAST_SET_TIME_RAW = "lock_last_set_time_raw"
     const val NEXT_SET_TIME = "next_set_time"
     const val HOME_DARKEN_PERCENTAGE = "home_darken_percentage"
     const val LOCK_DARKEN_PERCENTAGE = "darken_darken_percentage"

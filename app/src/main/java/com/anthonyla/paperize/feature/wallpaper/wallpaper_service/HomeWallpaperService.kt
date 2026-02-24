@@ -33,6 +33,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -614,6 +617,7 @@ class HomeWallpaperService: Service() {
                                     null
                                 }
                                 setWallpaperSafely(homeImage, WallpaperManager.FLAG_SYSTEM, wallpaperManager, cropHint)
+                                recordWallpaperSet(home = true)
                             }
 
                             processBitmap(
@@ -630,6 +634,7 @@ class HomeWallpaperService: Service() {
                                     null
                                 }
                                 setWallpaperSafely(lockImage, WallpaperManager.FLAG_LOCK, wallpaperManager, cropHint)
+                                recordWallpaperSet(lock = true)
                             }
                         }
                     } else {
@@ -640,6 +645,7 @@ class HomeWallpaperService: Service() {
                                 null
                             }
                             setWallpaperSafely(image, WallpaperManager.FLAG_SYSTEM, wallpaperManager, cropHint)
+                            recordWallpaperSet(home = true)
                         }
                     }
                     context.triggerWallpaperTaskerEvent()
@@ -652,6 +658,21 @@ class HomeWallpaperService: Service() {
             }
         }
         return false
+    }
+
+    private fun recordWallpaperSet(home: Boolean = false, lock: Boolean = false) {
+        if (!home && !lock) return
+        CoroutineScope(Dispatchers.IO).launch {
+            val now = LocalDateTime.now().withNano(0)
+            val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+            settingsDataStoreImpl.putString(SettingsConstants.LAST_SET_TIME, now.format(formatter))
+            if (home) {
+                settingsDataStoreImpl.putString(SettingsConstants.HOME_LAST_SET_TIME_RAW, now.toString())
+            }
+            if (lock) {
+                settingsDataStoreImpl.putString(SettingsConstants.LOCK_LAST_SET_TIME_RAW, now.toString())
+            }
+        }
     }
 
     private fun refreshAlbum(context: Context) {

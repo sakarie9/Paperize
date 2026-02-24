@@ -125,10 +125,27 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
 
         if (setAlarm) {
             if (wallpaperAlarmItem.scheduleSeparately) {
-                scheduleWallpaper(wallpaperAlarmItem, Type.LOCK, Type.LOCK.ordinal, firstLaunch, homeNextTime, lockNextTime)
-                scheduleWallpaper(wallpaperAlarmItem, Type.HOME, Type.HOME.ordinal, firstLaunch, homeNextTime, lockNextTime)
+                val scheduleLock = when (origin) {
+                    Type.HOME.ordinal -> false
+                    Type.LOCK.ordinal -> true
+                    else -> wallpaperAlarmItem.setLock
+                }
+                val scheduleHome = when (origin) {
+                    Type.LOCK.ordinal -> false
+                    Type.HOME.ordinal -> true
+                    else -> wallpaperAlarmItem.setHome
+                }
+
+                if (scheduleLock) {
+                    scheduleWallpaper(wallpaperAlarmItem, Type.LOCK, Type.LOCK.ordinal, firstLaunch, homeNextTime, lockNextTime)
+                }
+                if (scheduleHome) {
+                    scheduleWallpaper(wallpaperAlarmItem, Type.HOME, Type.HOME.ordinal, firstLaunch, homeNextTime, lockNextTime)
+                }
             } else {
-                scheduleWallpaper(wallpaperAlarmItem, Type.SINGLE, null, firstLaunch, homeNextTime, lockNextTime)
+                if (wallpaperAlarmItem.setHome || wallpaperAlarmItem.setLock) {
+                    scheduleWallpaper(wallpaperAlarmItem, Type.SINGLE, null, firstLaunch, homeNextTime, lockNextTime)
+                }
             }
         }
     }
@@ -184,7 +201,7 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
         }
     }
 
-    private fun calculateNextAlarmTime(
+    private suspend fun calculateNextAlarmTime(
         wallpaperAlarmItem: WallpaperAlarmItem,
         type: Type,
         firstLaunch: Boolean,
@@ -210,10 +227,31 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
             if (firstLaunch) {
                 now.plusMinutes(intervalMinutes)
             } else {
-                val baseTime = when (type) {
-                    Type.LOCK -> runCatching { LocalDateTime.parse(lockNextTime) }.getOrDefault(now)
-                    else -> runCatching { LocalDateTime.parse(homeNextTime) }.getOrDefault(now)
+                val baseTimeFromLastSet = when (type) {
+                    Type.LOCK -> {
+                        val raw = settingsDataStore.getString(SettingsConstants.LOCK_LAST_SET_TIME_RAW)
+                        runCatching { LocalDateTime.parse(raw) }.getOrNull()
+                    }
+                    Type.HOME -> {
+                        val raw = settingsDataStore.getString(SettingsConstants.HOME_LAST_SET_TIME_RAW)
+                        runCatching { LocalDateTime.parse(raw) }.getOrNull()
+                    }
+                    Type.SINGLE -> {
+                        val homeRaw = settingsDataStore.getString(SettingsConstants.HOME_LAST_SET_TIME_RAW)
+                        val lockRaw = settingsDataStore.getString(SettingsConstants.LOCK_LAST_SET_TIME_RAW)
+                        val homeLast = runCatching { LocalDateTime.parse(homeRaw) }.getOrNull()
+                        val lockLast = runCatching { LocalDateTime.parse(lockRaw) }.getOrNull()
+                        listOfNotNull(homeLast, lockLast).maxOrNull()
+                    }
+                    else -> null
                 }
+
+                val legacyBaseTime = when (type) {
+                    Type.LOCK -> runCatching { LocalDateTime.parse(lockNextTime) }.getOrNull()
+                    else -> runCatching { LocalDateTime.parse(homeNextTime) }.getOrNull()
+                }
+
+                val baseTime = baseTimeFromLastSet ?: legacyBaseTime ?: now
                 var futureTime = baseTime.plusMinutes(intervalMinutes)
                 while (!futureTime.isAfter(now)) {
                     futureTime = futureTime.plusMinutes(intervalMinutes)
@@ -222,10 +260,16 @@ class WallpaperAlarmSchedulerImpl @Inject constructor(
             }
         }
 
-        return if (type == Type.HOME && wallpaperAlarmItem.scheduleSeparately) {
-            nextTime.plusSeconds(10).withSecond(0).withNano(0)
+        val normalized = if (type == Type.HOME && wallpaperAlarmItem.scheduleSeparately) {
+            nextTime.withSecond(10).withNano(0)
         } else {
             nextTime.withSecond(0).withNano(0)
+        }
+
+        return if (normalized.isAfter(now)) {
+            normalized
+        } else {
+            normalized.plusMinutes(1)
         }
     }
 
