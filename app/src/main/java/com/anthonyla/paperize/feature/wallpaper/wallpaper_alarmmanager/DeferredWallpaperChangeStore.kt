@@ -54,6 +54,11 @@ object DeferredWallpaperChangeStore {
         return change
     }
 
+    fun hasPending(context: Context): Boolean {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.contains(KEY_TARGET)
+    }
+
     fun clear(context: Context) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit { clear() }
     }

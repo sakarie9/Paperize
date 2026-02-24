@@ -3,6 +3,7 @@ package com.anthonyla.paperize.feature.wallpaper.wallpaper_alarmmanager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.PowerManager
 import android.util.Log
 import com.anthonyla.paperize.core.SettingsConstants
 import com.anthonyla.paperize.core.SettingsConstants.WALLPAPER_CHANGE_INTERVAL_DEFAULT
@@ -10,6 +11,7 @@ import com.anthonyla.paperize.core.Type
 import com.anthonyla.paperize.data.settings.SettingsDataStore
 import com.anthonyla.paperize.feature.wallpaper.wallpaper_service.HomeWallpaperService
 import com.anthonyla.paperize.feature.wallpaper.wallpaper_service.LockWallpaperService
+import com.anthonyla.paperize.feature.wallpaper.wallpaper_service.DeferredScreenOffListenerService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -58,16 +60,22 @@ class WallpaperReceiver : BroadcastReceiver() {
 
                 val onlyNonInteractive = settingsDataStore.getBoolean(SettingsConstants.ONLY_NON_INTERACTIVE) ?: false
                 if (onlyNonInteractive && !deferredTrigger) {
-                    Log.d(TAG, "Only-non-interactive active: skip service start and defer latest request")
-                    deferLatestRequest(
-                        context = context,
-                        type = type,
-                        setHome = setHome,
-                        setLock = setLock,
-                        homeInterval = homeInterval,
-                        lockInterval = lockInterval,
-                        scheduleSeparately = scheduleSeparately
-                    )
+                    val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                    if (powerManager.isInteractive) {
+                        Log.d(TAG, "Only-non-interactive active and device interactive: defer until next screen off")
+                        deferLatestRequest(
+                            context = context,
+                            type = type,
+                            setHome = setHome,
+                            setLock = setLock,
+                            homeInterval = homeInterval,
+                            lockInterval = lockInterval,
+                            scheduleSeparately = scheduleSeparately
+                        )
+                        DeferredScreenOffListenerService.start(context)
+                    } else {
+                        Log.d(TAG, "Only-non-interactive active and device already non-interactive: skip this due event")
+                    }
                 } else {
                     when (type) {
                         Type.SINGLE.ordinal -> {
@@ -196,6 +204,7 @@ class WallpaperReceiver : BroadcastReceiver() {
             type?.let { putExtra("type", it) }
             putExtra("deferredTrigger", deferredTrigger)
         }
-        context.startForegroundService(serviceIntent)
+        runCatching { context.startForegroundService(serviceIntent) }
+            .onFailure { Log.w(TAG, "Failed to start service ${serviceClass.simpleName}", it) }
     }
 }

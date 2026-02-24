@@ -159,6 +159,7 @@ class LockWallpaperService: Service() {
                 type = type
             )
         )
+        DeferredScreenOffListenerService.start(this)
     }
 
     private fun selectNextWallpaper(queue: List<String>, blockedWallpapers: Set<String>): Pair<String?, List<String>> {
