@@ -48,6 +48,8 @@ class App: Application() {
             deferredWallpaperTriggerReceiver,
             IntentFilter().apply {
                 addAction(android.content.Intent.ACTION_SCREEN_OFF)
+                addAction(android.content.Intent.ACTION_SCREEN_ON)
+                addAction(android.content.Intent.ACTION_USER_PRESENT)
             },
             ContextCompat.RECEIVER_NOT_EXPORTED
         )

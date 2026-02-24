@@ -39,13 +39,7 @@
         </activity>
         <receiver android:name=".feature.wallpaper.wallpaper_alarmmanager.WallpaperReceiver" />
         <receiver android:name=".feature.wallpaper.wallpaper_alarmmanager.DeferredWallpaperTriggerReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.SCREEN_OFF" />
-                <action android:name="android.intent.action.SCREEN_ON" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-            </intent-filter>
-        </receiver>
+            android:exported="false" />
         <service android:name=".feature.wallpaper.wallpaper_service.HomeWallpaperService"
             android:foregroundServiceType="dataSync|specialUse" />
         <service android:name=".feature.wallpaper.wallpaper_service.LockWallpaperService"
